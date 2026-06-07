@@ -1,0 +1,37 @@
+category,id,name,hp,speed,damage,range,delay,ammo_type,extra,notes
+player,felix,Феликс,140,0.32,,,,,jump -8.4,здоровье (тема: «время»); авто-убывания нет; турбо тратит здоровье
+weapon,pistol,Пистолет,,8,18,315,270,pistol,price 0,"короткая дистанция, быстрый темп"
+weapon,mosin,Винтовка Мосина,,13.2,66,820,760,rifle,price 0,"редко, больно, по-старому"
+weapon,smg,Пулемёт,,12.5,13,610,85,machinegun,price 26,быстро жрёт пулемётные патроны
+weapon,gasSprayer,Газомет,,3.8,2.8,240,68,gas,price 38,"облако газа, давит зоной"
+weapon,sabre,Шашка,,0,40,70,390,none,price 24,"ближний бой, рискованно, без патронов"
+weapon,shotgun,Обрез,,9.8,18x5,340,640,shells,price 48,"картечь, конусный выстрел"
+ammo,pistol,пистолетные,,,,,,pistol,start 36/max 90,покупка 24 за 10
+ammo,rifle,винтовочные,,,,,,rifle,start 20/max 70,покупка 12 за 14
+ammo,machinegun,пулемётные,,,,,,machinegun,start 0/max 180,покупка 45 за 14
+ammo,shells,картечь,,,,,,shells,start 0/max 34,покупка 8 за 18
+ammo,gas,газовые баллоны,,,,,,gas,start 0/max 120,покупка 26 за 18
+enemy,zombie,zombie,82,0.1,11,38,,ближний,role melee,"xp 16, деньги 5-10"
+enemy,runner,runner,68,0.16,9,34,,ближний,role melee,"xp 18, деньги 5-11"
+enemy,pistol,pistol,90,0.075,14,365,105,стрелок,role ranged,"xp 23, деньги 7-14"
+enemy,gunner,gunner,118,0.068,8,455,44,стрелок,role ranged,"xp 34, деньги 9-18"
+enemy,rifleman,rifleman,98,0.092,10,470,36,стрелок,role ranged,"xp 28, деньги 8-16"
+enemy,gasman,gasman,108,0.11,7,155,74,стрелок,role ranged,"xp 34, деньги 10-19"
+enemy,sabreur,sabreur,104,0.19,18,56,,ближний,role melee,"xp 30, деньги 8-16"
+enemy,horse,horse,160,0.27,20,44,,ближний,role charger,"xp 48, деньги 16-32"
+enemy,kamikaze,kamikaze,55,0.2,50,42,,ближний,role melee,"xp 28, деньги 4-10"
+enemy,shielder,shielder,220,0.062,20,44,,ближний,role melee,"xp 64, деньги 20-42"
+enemy,sniper,sniper,80,0.042,60,640,240,стрелок,role ranged,"xp 55, деньги 16-30"
+enemy,maxim,maxim,245,0,9,560,16,стрелок,role turret,"xp 58, деньги 18-34"
+enemy,miniboss,miniboss,300,0.105,21,420,70,стрелок,role elite,"xp 96, деньги 38-70"
+boss,mushroomBoss,mushroomBoss,430,0.09,22,360,88,стрелок,role boss,"xp 120, деньги 60-90"
+boss,treeBoss,treeBoss,485,0.068,26,390,100,стрелок,role boss,"xp 135, деньги 65-100"
+boss,sandBoss,sandBoss,450,0.12,20,340,,ближний,role boss,"xp 135, деньги 65-100"
+boss,swampBoss,swampBoss,520,0.065,24,430,65,стрелок,role boss,"xp 150, деньги 70-110"
+boss,factoryBoss,factoryBoss,580,0.068,26,510,50,стрелок,role boss,"xp 170, деньги 80-125"
+boss,lenin,lenin,670,0.1,30,520,58,стрелок,role boss,"xp 280, деньги 140-200"
+ability,doubleJump,Двойной прыжок,,,,,,,биом 1,второй прыжок в воздухе
+ability,turbo,Турбо,,,,,,,биом 2,"C/С: 5 секунд быстрее и сильнее, но тратит здоровье; потом слабость"
+ability,timeStop,Остановка времени,,,,,,,биом 3,F/А замораживает врагов на 5 секунд
+ability,meleeMastery,Мастер шашки,,,,,,,биом 4,шашка сильнее и отталкивает дальше
+ability,finalResolve,Финальная решимость,,,,,,,биом 5,"урон по боссам выше, перекат быстрее"
