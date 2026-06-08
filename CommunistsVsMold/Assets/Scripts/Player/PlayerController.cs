@@ -44,6 +44,9 @@ namespace Kommunisty
         [Header("Здоровье (\"время\")")]
         [SerializeField] float maxHealth = 140f;
 
+        [Header("Смерть / респаун")]
+        [SerializeField] float respawnDelay = 1.5f;
+
         [Header("Проверка земли")]
         [SerializeField] Transform groundCheck;
         [SerializeField] float groundRadius = 0.18f;
@@ -54,6 +57,8 @@ namespace Kommunisty
         [SerializeField] float dropThroughTime = 0.35f;
 
         public float Health { get; private set; }
+        public float MaxHealth => maxHealth;
+        public bool IsDead => isDead;
         public int Facing { get; private set; } = 1;
         public bool IsGrounded { get; private set; }
         public bool IsDodging => dodgeTimer > 0f;
@@ -68,6 +73,10 @@ namespace Kommunisty
         float turboTimer, turboCdTimer, weakTimer;
         float invulnTimer;
 
+        bool isDead;
+        Vector3 spawnPoint;
+        float respawnTimer;
+
         void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
@@ -76,11 +85,30 @@ namespace Kommunisty
             rb.freezeRotation = true;
             rb.gravityScale = gravityScale;
             Health = maxHealth;
+            spawnPoint = transform.position;
         }
 
         void Update()
         {
             float dt = Time.deltaTime;
+
+            // Смерть и респаун обрабатываем раньше обычного ввода.
+            if (Health <= 0f && !isDead) Die();
+
+            if (isDead)
+            {
+                respawnTimer -= dt;
+                if (respawnTimer <= 0f)
+                {
+                    transform.position = spawnPoint;
+                    rb.linearVelocity = Vector2.zero;
+                    Health = maxHealth;
+                    isDead = false;
+                    invulnTimer = 0.6f;
+                }
+                return;
+            }
+
             Tick(ref coyoteTimer, dt);
             Tick(ref jumpBufferTimer, dt);
             Tick(ref dodgeCdTimer, dt);
@@ -174,7 +202,7 @@ namespace Kommunisty
 
             // Прыжок (земля/coyote или двойной)
             float vy = rb.linearVelocity.y;
-            if (jumpBufferTimer > 0f)
+            if (!isDead && jumpBufferTimer > 0f)
             {
                 if (coyoteTimer > 0f) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; coyoteTimer = 0f; }
                 else if (jumpsLeft > 0) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; }
@@ -188,6 +216,7 @@ namespace Kommunisty
 
         float HInput()
         {
+            if (isDead) return 0f;
             var kb = Keyboard.current;
             if (kb == null) return 0f;
             float x = 0f;
@@ -200,7 +229,18 @@ namespace Kommunisty
         {
             if (IsInvulnerable) return;
             Health = Mathf.Max(0f, Health - amount);
-            // TODO: смерть/откидывание/неуязвимость после удара
+            GameFX.Instance?.Shake(0.12f, 0.12f);
+            // TODO: откидывание/неуязвимость после удара
+        }
+
+        // Смерть игрока: фиксируем состояние, запускаем таймер респауна и фидбэк.
+        void Die()
+        {
+            isDead = true;
+            respawnTimer = respawnDelay;
+            rb.linearVelocity = Vector2.zero;
+            GameFX.Instance?.Shake(0.3f, 0.4f);
+            GameFX.Instance?.HitStop(0.12f);
         }
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);

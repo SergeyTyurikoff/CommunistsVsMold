@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3824667262098807467}
   - component: {fileID: 8631962377629108277}
   - component: {fileID: 5454722920738519047}
+  - component: {fileID: 7492125427057609148}
   m_Layer: 10
   m_Name: Zombie
   m_TagString: Untagged
@@ -190,3 +191,18 @@ MonoBehaviour:
   meleeRange: 1
   meleeDamage: 11
   meleeCooldown: 0.9
+--- !u!114 &7492125427057609148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3465420151331463324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62f61a299592d1a41bf94a8a948d8ad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.EnemyDeathFX
+  gibColor: {r: 0.45, g: 0.7, b: 0.25, a: 1}
+  gibCount: 12
+  yOffset: 1

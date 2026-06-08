@@ -16,6 +16,11 @@ namespace Kommunisty
 
         Vector3 vel;
 
+        // Тряска экрана (screen shake). Тикает на unscaledDeltaTime, чтобы трясло даже при hit-stop.
+        float shakeTimer;
+        float shakeDur;
+        float shakeMag;
+
         void LateUpdate()
         {
             if (target == null) return;
@@ -26,7 +31,33 @@ namespace Kommunisty
 
             Vector3 next = Vector3.SmoothDamp(transform.position, desired, ref vel, smoothTime);
             next.z = offset.z;
+
+            // Затухающий случайный сдвиг поверх следования; Z не трогаем.
+            if (shakeTimer > 0f)
+            {
+                shakeTimer -= Time.unscaledDeltaTime;
+                if (shakeTimer < 0f) shakeTimer = 0f;
+                float amt = (shakeDur > 0f) ? shakeMag * (shakeTimer / shakeDur) : 0f;
+                next.x += Random.Range(-amt, amt);
+                next.y += Random.Range(-amt, amt);
+            }
+
             transform.position = next;
+        }
+
+        /// <summary>
+        /// Запустить тряску экрана. Если уже трясётся — берём максимум по длительности и амплитуде.
+        /// </summary>
+        public void AddShake(float duration, float magnitude)
+        {
+            if (duration <= 0f || magnitude <= 0f) return;
+
+            if (duration > shakeTimer)
+            {
+                shakeTimer = duration;
+                shakeDur = duration;
+            }
+            if (magnitude > shakeMag) shakeMag = magnitude;
         }
 
         public void SetTarget(Transform t) => target = t;
