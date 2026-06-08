@@ -43,3 +43,6 @@ sysinfo.txt
 # OS
 .DS_Store
 Thumbs.db
+
+# Отладочные/QA-скриншоты Unity — не нужны в репозитории
+CommunistsVsMold/Assets/Screenshots/
