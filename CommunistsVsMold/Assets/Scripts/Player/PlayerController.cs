@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -48,6 +49,10 @@ namespace Kommunisty
         [SerializeField] float groundRadius = 0.18f;
         [SerializeField] LayerMask groundMask;
 
+        [Header("Спуск сквозь one-way платформы (S / ↓)")]
+        [SerializeField] LayerMask oneWayMask;
+        [SerializeField] float dropThroughTime = 0.35f;
+
         public float Health { get; private set; }
         public int Facing { get; private set; } = 1;
         public bool IsGrounded { get; private set; }
@@ -56,6 +61,7 @@ namespace Kommunisty
 
         Rigidbody2D rb;
         SpriteRenderer sprite;
+        Collider2D selfCol;
         int jumpsLeft;
         float coyoteTimer, jumpBufferTimer;
         float dodgeTimer, dodgeCdTimer, dodgeDir;
@@ -66,6 +72,7 @@ namespace Kommunisty
         {
             rb = GetComponent<Rigidbody2D>();
             sprite = GetComponentInChildren<SpriteRenderer>();
+            selfCol = GetComponent<Collider2D>();
             rb.freezeRotation = true;
             rb.gravityScale = gravityScale;
             Health = maxHealth;
@@ -109,9 +116,30 @@ namespace Kommunisty
                 invulnTimer = dodgeDuration;
             }
 
+            // Спуск сквозь one-way платформу (S / ↓)
+            if (kb != null && (kb.sKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame) && IsGrounded)
+                TryDropThrough();
+
             // Поворот спрайта
             float h = HInput();
             if (dodgeTimer <= 0f && h != 0) { Facing = (int)Mathf.Sign(h); if (sprite) sprite.flipX = Facing < 0; }
+        }
+
+        // Ищет one-way платформу под ногами и временно отключает с ней столкновение.
+        void TryDropThrough()
+        {
+            if (selfCol == null || groundCheck == null) return;
+            var hit = Physics2D.Raycast(groundCheck.position, Vector2.down, 0.3f, oneWayMask);
+            if (hit.collider != null)
+                StartCoroutine(DropThroughRoutine(hit.collider));
+        }
+
+        IEnumerator DropThroughRoutine(Collider2D platCol)
+        {
+            Physics2D.IgnoreCollision(selfCol, platCol, true);
+            yield return new WaitForSeconds(dropThroughTime);
+            if (platCol != null && selfCol != null)
+                Physics2D.IgnoreCollision(selfCol, platCol, false);
         }
 
         void FixedUpdate()
