@@ -83,8 +83,11 @@ namespace Kommunisty
         void OnTriggerStay2D(Collider2D other)
         {
             var pc = other.GetComponentInParent<PlayerController>();
-            if (pc != null && !pc.IsDead)
-                pc.ApplySlow(slowMult, 0.45f);
+            if (pc == null || pc.IsDead) return;
+            // Противогаз (UtilityInventory) даёт иммунитет к газу.
+            var util = pc.GetComponent<UtilityInventory>();
+            if (util != null && util.GasImmune) return;
+            pc.ApplySlow(slowMult, 0.45f);
         }
     }
 }

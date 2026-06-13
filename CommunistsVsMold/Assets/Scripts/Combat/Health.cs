@@ -18,6 +18,9 @@ namespace Kommunisty
         /// <summary>Вызывается перед уничтожением объекта (для эффектов/звука/счёта).</summary>
         public event Action OnDeath;
 
+        /// <summary>Глобальное событие смерти любой сущности с Health (для дропа лута и пр.).</summary>
+        public static event Action<Health> OnAnyDeath;
+
         private Rigidbody2D rb;
         private IDamageFilter filter;   // опц. модификатор урона (щит и т.п.)
 
@@ -66,6 +69,7 @@ namespace Kommunisty
         private void Die()
         {
             OnDeath?.Invoke();
+            OnAnyDeath?.Invoke(this);
             Destroy(gameObject);
         }
     }

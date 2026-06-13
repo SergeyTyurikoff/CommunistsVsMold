@@ -30,6 +30,7 @@ namespace Kommunisty
         [SerializeField] AudioClip playerDown;
         [SerializeField] AudioClip jump;
         [SerializeField] AudioClip portal;
+        [SerializeField] AudioClip pickup;
         [SerializeField, Range(0f, 1f)] float sfxVolume = 0.9f;
 
         AudioSource music;
@@ -100,5 +101,6 @@ namespace Kommunisty
         public void PlayPlayerDown() => Sfx(playerDown);
         public void PlayJump()       => Sfx(jump, 0.7f);
         public void PlayPortal()     => Sfx(portal);
+        public void PlayPickup()     => Sfx(pickup, 0.8f);
     }
 }
