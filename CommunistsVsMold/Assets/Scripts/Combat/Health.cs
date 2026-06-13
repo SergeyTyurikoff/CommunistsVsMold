@@ -48,6 +48,8 @@ namespace Kommunisty
 
             Hp -= dmg;
 
+            if (dmg > 0f) GameFX.Instance?.SpawnDamageNumber(transform.position, dmg);
+
             if (rb != null && knockback != Vector2.zero)
                 rb.AddForce(knockback, ForceMode2D.Impulse);
 

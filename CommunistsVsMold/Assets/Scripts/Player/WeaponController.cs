@@ -142,6 +142,7 @@ namespace Kommunisty
                 b.Init(muzzlePos, dir, w.projectileSpeed, w.damage, w.range, w.knockback, targetMask);
             }
 
+            GameFX.Instance?.MuzzleFlash(MuzzlePos(facing), facing);
             return true;
         }
 

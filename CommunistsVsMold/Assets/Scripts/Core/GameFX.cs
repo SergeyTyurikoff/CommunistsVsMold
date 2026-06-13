@@ -149,6 +149,51 @@ namespace Kommunisty
                 new Vector2(0.5f, 0.5f),
                 1f);
         }
+
+        // ───────────────────────── Числа урона ─────────────────────────
+
+        /// <summary>Всплывающее число урона над целью (мировой TextMesh, поднимается и тает).</summary>
+        public void SpawnDamageNumber(Vector2 pos, float dmg)
+        {
+            int val = Mathf.RoundToInt(dmg);
+            if (val <= 0) return;
+
+            var go = new GameObject("DamageNumber");
+            go.transform.position = (Vector3)pos + new Vector3(Random.Range(-0.2f, 0.2f), 0.8f, 0f);
+
+            var tm = go.AddComponent<TextMesh>();
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            tm.font = font;
+            tm.text = val.ToString();
+            tm.fontSize = 48;
+            tm.characterSize = 0.06f;
+            tm.anchor = TextAnchor.MiddleCenter;
+            tm.color = new Color(1f, 0.95f, 0.5f, 1f);
+
+            var mr = go.GetComponent<MeshRenderer>();
+            if (font != null) mr.sharedMaterial = font.material;   // TextMesh без своего материала не рисуется
+            mr.sortingOrder = 1200;
+
+            go.AddComponent<DamageNumber>().Init(0.7f);
+        }
+
+        // ───────────────────────── Дульная вспышка ─────────────────────────
+
+        /// <summary>Короткая дульная вспышка в точке выстрела (быстро гаснет).</summary>
+        public void MuzzleFlash(Vector2 pos, int facing)
+        {
+            EnsureGibSprite();
+            var go = new GameObject("MuzzleFlash");
+            go.transform.position = (Vector3)pos;
+            go.transform.localScale = Vector3.one * 0.6f;
+
+            var sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = gibSprite;
+            sr.color = new Color(1f, 0.9f, 0.4f, 0.9f);
+            sr.sortingOrder = 900;
+
+            go.AddComponent<GibFade>().Init(0.09f);
+        }
     }
 
     /// <summary>
@@ -178,6 +223,34 @@ namespace Kommunisty
             var c = baseColor;
             c.a = baseColor.a * k;
             sr.color = c;
+        }
+    }
+
+    /// <summary>Всплывающее число урона: поднимается и затухает, затем самоуничтожается.</summary>
+    public class DamageNumber : MonoBehaviour
+    {
+        float life = 0.7f, t;
+        TextMesh tm;
+        Color baseColor;
+
+        public void Init(float l)
+        {
+            life = l > 0f ? l : 0.7f;
+            tm = GetComponent<TextMesh>();
+            if (tm != null) baseColor = tm.color;
+            Destroy(gameObject, life);
+        }
+
+        void Update()
+        {
+            t += Time.deltaTime;
+            transform.position += Vector3.up * (Time.deltaTime * 1.3f);
+            if (tm != null)
+            {
+                var c = baseColor;
+                c.a = Mathf.Clamp01(1f - t / life);
+                tm.color = c;
+            }
         }
     }
 }
