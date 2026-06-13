@@ -12,23 +12,36 @@ namespace Kommunisty
         [SerializeField] private float maxHp = 100f;
 
         public float Hp { get; private set; }
+        public float MaxHp => maxHp;
         public bool IsDead { get; private set; }
 
         /// <summary>Вызывается перед уничтожением объекта (для эффектов/звука/счёта).</summary>
         public event Action OnDeath;
 
         private Rigidbody2D rb;
+        private IDamageFilter filter;   // опц. модификатор урона (щит и т.п.)
 
         private void Awake()
         {
             Hp = maxHp;
             rb = GetComponent<Rigidbody2D>();
+            filter = GetComponent<IDamageFilter>();
+        }
+
+        /// <summary>Масштабировать максимум HP (биом-скейл при спавне). Доливает до нового максимума.</summary>
+        public void ScaleMaxHp(float mul)
+        {
+            maxHp *= mul;
+            Hp = maxHp;
         }
 
         public void TakeDamage(float dmg, Vector2 knockback)
         {
             if (IsDead)
                 return;
+
+            if (filter != null)
+                dmg = filter.ModifyDamage(dmg, knockback);
 
             Hp -= dmg;
 

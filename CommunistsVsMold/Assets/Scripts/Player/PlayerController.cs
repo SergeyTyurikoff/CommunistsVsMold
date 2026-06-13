@@ -72,6 +72,7 @@ namespace Kommunisty
         float dodgeTimer, dodgeCdTimer, dodgeDir;
         float turboTimer, turboCdTimer, weakTimer;
         float invulnTimer;
+        float slowTimer, slowMult = 1f;   // газ-замедление (PORT_SPEC §3)
 
         bool isDead;
         Vector3 spawnPoint;
@@ -113,6 +114,7 @@ namespace Kommunisty
             Tick(ref jumpBufferTimer, dt);
             Tick(ref dodgeCdTimer, dt);
             Tick(ref invulnTimer, dt);
+            Tick(ref slowTimer, dt);
 
             // Таймеры турбо/слабости
             if (turboTimer > 0f)
@@ -195,7 +197,8 @@ namespace Kommunisty
             bool running = kb != null && (kb.leftShiftKey.isPressed || kb.rightShiftKey.isPressed);
             float speedMult = (running ? runMultiplier : 1f)
                             * (turboTimer > 0f ? turboSpeedMult : 1f)
-                            * (weakTimer > 0f ? weakSpeedMult : 1f);
+                            * (weakTimer > 0f ? weakSpeedMult : 1f)
+                            * (slowTimer > 0f ? slowMult : 1f);
             float target = HInput() * walkSpeed * speedMult;
             float rate = Mathf.Abs(target) > 0.01f ? accel : groundFriction;
             float vx = Mathf.MoveTowards(rb.linearVelocity.x, target, rate * dt);
@@ -244,6 +247,14 @@ namespace Kommunisty
         }
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);
+
+        /// <summary>Газ-замедление: множитель скорости (×0.5) на duration сек. Повторные вызовы
+        /// (пока игрок в облаке) рефрешат таймер. Урон НЕ наносит (PORT_SPEC §3).</summary>
+        public void ApplySlow(float mult, float duration)
+        {
+            slowMult = Mathf.Clamp(mult, 0.05f, 1f);
+            if (duration > slowTimer) slowTimer = duration;
+        }
 
         /// <summary>Точка возрождения (чекпойнт). Ставится BiomeManager при чекпойнте/смене биома.</summary>
         public void SetRespawnPoint(Vector3 p) => spawnPoint = p;
