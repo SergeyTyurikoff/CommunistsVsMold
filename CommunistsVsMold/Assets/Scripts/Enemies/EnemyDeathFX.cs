@@ -27,6 +27,7 @@ namespace Kommunisty
             GameFX.Instance?.SpawnGibs(p, gibColor, gibCount);
             GameFX.Instance?.Shake(0.18f, 0.22f);
             GameFX.Instance?.HitStop(0.05f);
+            AudioManager.Instance?.PlayEnemyDeath();
         }
 
         void OnDestroy()

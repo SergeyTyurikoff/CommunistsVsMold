@@ -116,6 +116,7 @@ namespace Kommunisty
             // Патроны тратим и ставим кулдаун только если выстрел реально состоялся.
             ammo.Use(w.ammo, w.ammoPerShot);
             cooldown = w.fireDelay;
+            AudioManager.Instance?.PlayShot(w.kind, w.ammo);
         }
 
         // Стрельба снарядами через пул. count=1 → как Gun/Gas; count>1 → веер (Shotgun).

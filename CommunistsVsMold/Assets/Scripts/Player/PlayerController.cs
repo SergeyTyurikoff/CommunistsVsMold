@@ -207,8 +207,8 @@ namespace Kommunisty
             float vy = rb.linearVelocity.y;
             if (!isDead && jumpBufferTimer > 0f)
             {
-                if (coyoteTimer > 0f) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; coyoteTimer = 0f; }
-                else if (jumpsLeft > 0) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; }
+                if (coyoteTimer > 0f) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; coyoteTimer = 0f; AudioManager.Instance?.PlayJump(); }
+                else if (jumpsLeft > 0) { vy = jumpVelocity; jumpsLeft--; jumpBufferTimer = 0f; AudioManager.Instance?.PlayJump(); }
             }
 
             // Усиленная гравитация на падении
@@ -233,6 +233,7 @@ namespace Kommunisty
             if (IsInvulnerable) return;
             Health = Mathf.Max(0f, Health - amount);
             GameFX.Instance?.Shake(0.12f, 0.12f);
+            AudioManager.Instance?.PlayPlayerHit();
             // TODO: откидывание/неуязвимость после удара
         }
 
@@ -244,6 +245,7 @@ namespace Kommunisty
             rb.linearVelocity = Vector2.zero;
             GameFX.Instance?.Shake(0.3f, 0.4f);
             GameFX.Instance?.HitStop(0.12f);
+            AudioManager.Instance?.PlayPlayerDown();
         }
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);
