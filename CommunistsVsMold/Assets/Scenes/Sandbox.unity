@@ -1279,6 +1279,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponController
   weapons:
   - {fileID: 11400000, guid: 1e6de9bd0a8e48b4f927064189356c1f, type: 2}
+  - {fileID: 11400000, guid: 52329b609a2c4c74086b57baeff84773, type: 2}
+  - {fileID: 11400000, guid: 359936268f26c2242ae720691a3a4939, type: 2}
+  - {fileID: 11400000, guid: 17068fae6a00a394c9fe6ee21b19779e, type: 2}
+  - {fileID: 11400000, guid: 3dc288b0d46af2d4e8248618c6452522, type: 2}
   - {fileID: 11400000, guid: 6a38b7148810ebf43a66c4d5c3c4cd01, type: 2}
   current: 0
   targetMask:
