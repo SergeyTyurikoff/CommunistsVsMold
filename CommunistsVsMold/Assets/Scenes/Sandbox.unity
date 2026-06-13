@@ -2088,6 +2088,8 @@ GameObject:
   - component: {fileID: 817022849}
   - component: {fileID: 817022848}
   - component: {fileID: 817022847}
+  - component: {fileID: 817022852}
+  - component: {fileID: 817022851}
   m_Layer: 0
   m_Name: GameSystems
   m_TagString: Untagged
@@ -2147,6 +2149,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &817022851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38ba1ffa26a79944d88ea0b84cc14cf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.AbilityUnlocker
+--- !u!114 &817022852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f277b2be6929d1429d3816484b97e4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.TimeStop
+  duration: 5
+  cooldown: 7
 --- !u!1 &875570818
 GameObject:
   m_ObjectHideFlags: 0
@@ -2511,6 +2539,7 @@ MonoBehaviour:
   wallet: {fileID: 0}
   util: {fileID: 0}
   lvl: {fileID: 0}
+  combo: {fileID: 0}
   shop: {fileID: 370372476}
 --- !u!1 &1181951534
 GameObject:
@@ -2561,6 +2590,7 @@ GameObject:
   - component: {fileID: 1188424194}
   - component: {fileID: 1188424193}
   - component: {fileID: 1188424195}
+  - component: {fileID: 1188424196}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2587,19 +2617,26 @@ MonoBehaviour:
   jumpVelocity: 14
   gravityScale: 3.5
   fallGravityMult: 1.4
-  doubleJumpUnlocked: 1
+  doubleJumpUnlocked: 0
   coyoteTime: 0.1
   jumpBuffer: 0.1
   dodgeSpeed: 16
   dodgeDuration: 0.23
   dodgeCooldown: 0.97
-  turboUnlocked: 1
+  turboUnlocked: 0
   turboDuration: 5
   turboCooldown: 5
   turboSpeedMult: 1.55
   turboHealthPerSec: 7.2
   weakDuration: 5
   weakSpeedMult: 0.52
+  timeStopUnlocked: 0
+  stompDamage: 30
+  stompBounce: 9
+  stompKnockback: 6
+  stompMask:
+    serializedVersion: 2
+    m_Bits: 1024
   maxHealth: 140
   respawnDelay: 1.5
   groundCheck: {fileID: 1711086348}
@@ -2839,6 +2876,25 @@ MonoBehaviour:
   ammoCapPerLevel: 6
   machinegunCapPerLevel: 18
   gasCapPerLevel: 10
+--- !u!114 &1188424196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188424185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1728f4eb80787d41bbadf56e670da12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.ComboTracker
+  window: 2.17
+  thresholds: 0100000004000000080000000e000000
+  mults:
+  - 1
+  - 1.5
+  - 2.2
+  - 3.5
 --- !u!1 &1199528960
 GameObject:
   m_ObjectHideFlags: 0

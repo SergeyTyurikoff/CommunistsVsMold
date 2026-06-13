@@ -41,6 +41,15 @@ namespace Kommunisty
         [SerializeField] float weakDuration = 5f;
         [SerializeField] float weakSpeedMult = 0.52f;
 
+        [Header("Стоп-время (F) — открывается по биомам, не тратит здоровье")]
+        [SerializeField] bool timeStopUnlocked = false;
+
+        [Header("Стомп (прыжок на врага сверху)")]
+        [SerializeField] float stompDamage = 30f;
+        [SerializeField] float stompBounce = 9f;
+        [SerializeField] float stompKnockback = 6f;
+        [SerializeField] LayerMask stompMask;            // слой врагов (Enemy)
+
         [Header("Здоровье (\"время\")")]
         [SerializeField] float maxHealth = 140f;
 
@@ -137,6 +146,10 @@ namespace Kommunisty
             if (turboUnlocked && kb != null && kb.cKey.wasPressedThisFrame && turboTimer <= 0f && weakTimer <= 0f && turboCdTimer <= 0f && Health > 20f)
                 turboTimer = turboDuration;
 
+            // Стоп-время (F) — если открыто
+            if (timeStopUnlocked && kb != null && kb.fKey.wasPressedThisFrame)
+                TimeStop.Instance?.TryActivate();
+
             // Перекат
             if (kb != null && kb.zKey.wasPressedThisFrame && dodgeTimer <= 0f && dodgeCdTimer <= 0f)
             {
@@ -172,6 +185,29 @@ namespace Kommunisty
                 Physics2D.IgnoreCollision(selfCol, platCol, false);
         }
 
+        // Стомп: ищем врага под ногами при падении; топчем (урон + отскок), боссов нельзя.
+        void TryStomp()
+        {
+            if (groundCheck == null) return;
+            Vector2 center = (Vector2)groundCheck.position + Vector2.down * 0.1f;
+            var hits = Physics2D.OverlapBoxAll(center, new Vector2(0.6f, 0.3f), 0f, stompMask);
+            for (int i = 0; i < hits.Length; i++)
+            {
+                var col = hits[i];
+                if (col == null) continue;
+                if (col.GetComponentInParent<BossController>() != null) continue;   // боссов не топчем
+                var dmg = col.GetComponent<IDamageable>() ?? col.GetComponentInParent<IDamageable>();
+                if (dmg == null) continue;
+                if (col.transform.position.y > transform.position.y - 0.2f) continue; // враг должен быть ниже
+                dmg.TakeDamage(stompDamage, Vector2.down * stompKnockback);
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, stompBounce);    // отскок вверх
+                invulnTimer = Mathf.Max(invulnTimer, 0.27f);
+                GameFX.Instance?.HitStop(0.04f);
+                GameFX.Instance?.Shake(0.12f, 0.18f);
+                return; // один стомп за кадр
+            }
+        }
+
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
@@ -191,6 +227,10 @@ namespace Kommunisty
                 coyoteTimer = coyoteTime;
                 jumpsLeft = doubleJumpUnlocked ? 2 : 1;
             }
+
+            // Стомп: при падении топчем врага под ногами.
+            if (!IsGrounded && rb.linearVelocity.y < -0.1f && dodgeTimer <= 0f)
+                TryStomp();
 
             // Горизонталь
             var kb = Keyboard.current;
@@ -249,6 +289,11 @@ namespace Kommunisty
         }
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);
+
+        // Открытие способностей по биомам (вызывает AbilityUnlocker).
+        public void UnlockDoubleJump() => doubleJumpUnlocked = true;
+        public void UnlockTurbo() => turboUnlocked = true;
+        public void UnlockTimeStop() => timeStopUnlocked = true;
 
         /// <summary>Поднять максимум здоровья (прокачка). По умолчанию доливает на ту же величину.</summary>
         public void AddMaxHealth(float delta, bool heal = true)

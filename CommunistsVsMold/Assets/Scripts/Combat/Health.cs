@@ -21,6 +21,9 @@ namespace Kommunisty
         /// <summary>Глобальное событие смерти любой сущности с Health (для дропа лута и пр.).</summary>
         public static event Action<Health> OnAnyDeath;
 
+        /// <summary>Глобальное событие получения урона (dmg>0) — для комбо игрока и т.п.</summary>
+        public static event Action<Health, float> OnAnyDamaged;
+
         private Rigidbody2D rb;
         private IDamageFilter filter;   // опц. модификатор урона (щит и т.п.)
 
@@ -48,7 +51,11 @@ namespace Kommunisty
 
             Hp -= dmg;
 
-            if (dmg > 0f) GameFX.Instance?.SpawnDamageNumber(transform.position, dmg);
+            if (dmg > 0f)
+            {
+                GameFX.Instance?.SpawnDamageNumber(transform.position, dmg);
+                OnAnyDamaged?.Invoke(this, dmg);
+            }
 
             if (rb != null && knockback != Vector2.zero)
                 rb.AddForce(knockback, ForceMode2D.Impulse);

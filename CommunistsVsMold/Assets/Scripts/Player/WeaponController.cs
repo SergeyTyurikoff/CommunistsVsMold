@@ -26,6 +26,7 @@ namespace Kommunisty
 
         PlayerController pc;
         AmmoInventory ammo;
+        ComboTracker combo;
         float cooldown;
 
         // Переиспользуемый буфер под результаты OverlapBox для мили (без аллокаций каждый удар).
@@ -53,6 +54,7 @@ namespace Kommunisty
         {
             pc = GetComponent<PlayerController>();
             ammo = GetComponent<AmmoInventory>();
+            combo = GetComponent<ComboTracker>();
         }
 
         void Update()
@@ -94,7 +96,7 @@ namespace Kommunisty
             if (!ammo.Has(w.ammo, w.ammoPerShot)) return;
 
             int facing = pc != null ? pc.Facing : 1;
-            Vector2 baseDir = new Vector2(facing, 0f);
+            Vector2 baseDir = AimDir(facing);   // прицел учитывает ↑/↓ (диагонали)
 
             switch (w.kind)
             {
@@ -139,7 +141,7 @@ namespace Kommunisty
 
                 Bullet b = BulletPool.Instance.Get();
                 if (b == null) continue;
-                b.Init(muzzlePos, dir, w.projectileSpeed, w.damage, w.range, w.knockback, targetMask);
+                b.Init(muzzlePos, dir, w.projectileSpeed, w.damage * ComboMult(), w.range, w.knockback, targetMask);
             }
 
             GameFX.Instance?.MuzzleFlash(MuzzlePos(facing), facing);
@@ -166,7 +168,7 @@ namespace Kommunisty
                 if (target == null)
                     target = col.GetComponentInParent<IDamageable>();
 
-                target?.TakeDamage(w.damage, knock);
+                target?.TakeDamage(w.damage * ComboMult(), knock);
             }
         }
 
@@ -176,6 +178,22 @@ namespace Kommunisty
             return muzzle != null
                 ? (Vector2)muzzle.position
                 : (Vector2)transform.position + new Vector2(facing * 0.6f, 0.9f);
+        }
+
+        // Множитель урона от комбо (1, если трекера нет).
+        float ComboMult() => combo != null ? combo.Multiplier : 1f;
+
+        // Направление выстрела: горизонталь по Facing + наклон по ↑/↓ (диагонали).
+        Vector2 AimDir(int facing)
+        {
+            var kb = Keyboard.current;
+            float ay = 0f;
+            if (kb != null)
+            {
+                if (kb.upArrowKey.isPressed) ay += 1f;
+                if (kb.downArrowKey.isPressed || kb.sKey.isPressed) ay -= 1f;
+            }
+            return Mathf.Abs(ay) < 0.01f ? new Vector2(facing, 0f) : new Vector2(facing, ay).normalized;
         }
 
         // Поворот 2D-вектора на угол в радианах.

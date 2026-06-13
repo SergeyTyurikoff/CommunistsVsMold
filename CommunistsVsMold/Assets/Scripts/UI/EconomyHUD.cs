@@ -16,6 +16,7 @@ namespace Kommunisty
         [SerializeField] Wallet wallet;
         [SerializeField] UtilityInventory util;
         [SerializeField] Leveling lvl;
+        [SerializeField] ComboTracker combo;
         [SerializeField] Shop shop;
 
         readonly StringBuilder sb = new StringBuilder();
@@ -33,7 +34,8 @@ namespace Kommunisty
                                  + " (" + (lvl != null ? Mathf.FloorToInt(lvl.Xp) : 0) + "/" + (lvl != null ? Mathf.FloorToInt(lvl.XpNext) : 0) + ")"
                                  + "    Деньги: " + (wallet != null ? wallet.Money : 0)
                                  + "    Аптечки: " + (util != null ? util.Medkits : 0) + " (1)"
-                                 + "    " + mask;
+                                 + "    " + mask
+                                 + ((combo != null && combo.Multiplier > 1f) ? ("    Комбо ×" + combo.Multiplier.ToString("0.0")) : "");
             }
 
             if (shopLabel != null)
@@ -46,12 +48,13 @@ namespace Kommunisty
 
         void EnsureRefs()
         {
-            if (wallet != null && util != null && lvl != null) return;
+            if (wallet != null && util != null && lvl != null && combo != null) return;
             var p = GameObject.FindWithTag("Player");
             if (p == null) return;
             if (wallet == null) wallet = p.GetComponent<Wallet>();
             if (util == null) util = p.GetComponent<UtilityInventory>();
             if (lvl == null) lvl = p.GetComponent<Leveling>();
+            if (combo == null) combo = p.GetComponent<ComboTracker>();
         }
 
         string BuildShop()

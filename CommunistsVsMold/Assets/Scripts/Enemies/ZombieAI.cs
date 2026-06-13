@@ -9,7 +9,7 @@ namespace Kommunisty
     /// Игрок ищется по тегу "Player"; урон наносится через PlayerController.Damage.
     /// </summary>
     [RequireComponent(typeof(Rigidbody2D))]
-    public class ZombieAI : MonoBehaviour
+    public class ZombieAI : MonoBehaviour, IBiomeScalable
     {
         [Header("Движение")]
         [SerializeField] float moveSpeed = 2f;
@@ -103,6 +103,13 @@ namespace Kommunisty
         {
             if (sprite != null)
                 sprite.flipX = facing < 0;
+        }
+
+        public void ApplyBiomeScale(int biome, int boost)
+        {
+            moveSpeed *= BiomeScaling.EnemySpeed(biome, boost);
+            meleeDamage *= BiomeScaling.EnemyDmg(biome, boost);
+            GetComponent<Health>()?.ScaleMaxHp(BiomeScaling.EnemyHp(biome, boost));
         }
     }
 }
