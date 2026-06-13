@@ -245,6 +245,12 @@ namespace Kommunisty
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);
 
+        /// <summary>Точка возрождения (чекпойнт). Ставится BiomeManager при чекпойнте/смене биома.</summary>
+        public void SetRespawnPoint(Vector3 p) => spawnPoint = p;
+
+        /// <summary>Текущая точка возрождения игрока.</summary>
+        public Vector3 RespawnPoint => spawnPoint;
+
         static void Tick(ref float t, float dt) { if (t > 0f) t -= dt; }
 
         void OnDrawGizmosSelected()

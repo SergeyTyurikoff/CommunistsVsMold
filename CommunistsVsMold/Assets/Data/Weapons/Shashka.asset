@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: "\u0428\u0430\u0448\u043A\u0430"
   kind: 2
   ammo: 0
-  damage: 60
+  damage: 200
   fireDelay: 0.4
   projectileSpeed: 0
   range: 0
