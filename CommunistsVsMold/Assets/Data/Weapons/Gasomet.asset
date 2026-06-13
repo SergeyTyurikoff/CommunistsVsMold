@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6937d3d255083d54a97256d6a703c737, type: 3}
+  m_Name: Gasomet
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponSO
+  displayName: "\u0413\u0430\u0437\u043E\u043C\u0451\u0442"
+  kind: 3
+  ammo: 5
+  damage: 6
+  fireDelay: 0.12
+  projectileSpeed: 10
+  range: 5
+  knockback: 1
+  pellets: 1
+  spread: 0.08
+  ammoPerShot: 1
+  meleeRange: 1.2
+  meleeArc: 1.4

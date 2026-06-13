@@ -5,59 +5,54 @@ using UnityEngine.InputSystem;
 namespace Kommunisty
 {
     /// <summary>
-    /// Оружие героя: стрельба снарядами через пул (BulletPool).
-    /// Огонь — удержание ЛКМ или J (с учётом fireDelay каждого оружия).
-    /// Смена оружия — Q (циклически). Числа оружия — в инспекторе (weapons).
+    /// Оружие героя на основе данных <see cref="WeaponSO"/> + расход патронов через <see cref="AmmoInventory"/>.
+    /// Огонь — удержание ЛКМ или J (с учётом fireDelay текущего оружия).
+    /// Смена оружия — Q (циклически по списку weapons).
+    /// Виды стрельбы (по <see cref="WeaponKind"/>): Gun — одна пуля; Shotgun — веер дроби;
+    /// Gas — пока как Gun (одна пуля, позже заменим облаком); Melee — без пули, удар OverlapBox перед игроком.
+    /// Снаряды — через пул <see cref="BulletPool"/>. Числа баланса — в ассетах WeaponSO.
     /// Ввод — новый Input System (UnityEngine.InputSystem), чтение через .current с null-guard.
-    /// Вешается на объект Player (рядом с PlayerController).
+    /// Вешается на объект Player (рядом с <see cref="PlayerController"/> и <see cref="AmmoInventory"/>).
     /// </summary>
     public class WeaponController : MonoBehaviour
     {
-        /// <summary>Описание одного оружия. Настраивается в инспекторе.</summary>
-        [System.Serializable]
-        public class WeaponDef
-        {
-            public string name;
-            public float damage;
-            public float fireDelay;       // задержка между выстрелами, сек
-            public float projectileSpeed; // скорость пули, м/с
-            public float range;           // дальность полёта пули, м
-            public float knockback;       // импульс отбрасывания цели
-        }
-
         [Header("Арсенал")]
-        [SerializeField] List<WeaponDef> weapons = new List<WeaponDef>();
+        [SerializeField] List<WeaponSO> weapons = new List<WeaponSO>();
         [SerializeField] int current = 0;
 
         [Header("Цель и точка выстрела")]
-        [SerializeField] LayerMask targetMask;  // по кому пули (слой Enemy)
-        [SerializeField] Transform muzzle;       // откуда вылетают; если null — расчёт от Facing
+        [SerializeField] LayerMask targetMask;   // по кому пули/удар (слой Enemy)
+        [SerializeField] Transform muzzle;        // откуда вылетают; если null — расчёт от Facing
 
         PlayerController pc;
+        AmmoInventory ammo;
         float cooldown;
 
-        void Reset()
+        // Переиспользуемый буфер под результаты OverlapBox для мили (без аллокаций каждый удар).
+        static readonly Collider2D[] MeleeHits = new Collider2D[16];
+
+        // --- Публичное API для HUD ---
+
+        /// <summary>Текущее оружие или null, если список пуст.</summary>
+        public WeaponSO CurrentWeapon =>
+            (weapons != null && weapons.Count > 0)
+                ? weapons[Mathf.Clamp(current, 0, weapons.Count - 1)]
+                : null;
+
+        /// <summary>Сколько патронов под текущее оружие (для None — int.MaxValue из AmmoInventory).</summary>
+        public int CurrentAmmo
         {
-            EnsureDefaults();
+            get
+            {
+                var w = CurrentWeapon;
+                return (w == null || ammo == null) ? 0 : ammo.Get(w.ammo);
+            }
         }
 
         void Awake()
         {
-            EnsureDefaults();
             pc = GetComponent<PlayerController>();
-            current = ClampIndex(current);
-        }
-
-        // Заполняет список оружия дефолтами, если он пуст.
-        void EnsureDefaults()
-        {
-            if (weapons != null && weapons.Count > 0) return;
-
-            weapons = new List<WeaponDef>
-            {
-                new WeaponDef { name = "Пистолет", damage = 18f, fireDelay = 0.27f, projectileSpeed = 18f, range = 9f, knockback = 3f },
-                new WeaponDef { name = "Газомёт",  damage = 6f,  fireDelay = 0.12f, projectileSpeed = 10f, range = 5f, knockback = 1f },
-            };
+            ammo = GetComponent<AmmoInventory>();
         }
 
         void Update()
@@ -68,7 +63,7 @@ namespace Kommunisty
             if (weapons == null || weapons.Count == 0)
                 return;
 
-            current = ClampIndex(current);
+            current = Mathf.Clamp(current, 0, weapons.Count - 1);
 
             var kb = Keyboard.current;
             var mouse = Mouse.current;
@@ -77,7 +72,7 @@ namespace Kommunisty
             if (kb != null && kb.qKey.wasPressedThisFrame)
                 current = (current + 1) % weapons.Count;
 
-            // Огонь — удержание ЛКМ или J.
+            // Огонь — удержание ЛКМ или J (кулдаун проверяется в Fire).
             bool firing = (mouse != null && mouse.leftButton.isPressed)
                        || (kb != null && kb.jKey.isPressed);
 
@@ -85,33 +80,108 @@ namespace Kommunisty
                 Fire();
         }
 
-        // Выстрел текущим оружием, если прошёл кулдаун и пул доступен.
+        // Выстрел текущим оружием: проверка кулдауна, наличия данных и патронов, затем стрельба по виду.
         void Fire()
         {
             if (cooldown > 0f) return;
-            if (BulletPool.Instance == null) return;
+            if (ammo == null) return;
             if (weapons == null || weapons.Count == 0) return;
 
-            WeaponDef w = weapons[ClampIndex(current)];
+            WeaponSO w = weapons[Mathf.Clamp(current, 0, weapons.Count - 1)];
+            if (w == null) return;
+
+            // Нет патронов — не стреляем (для None Has всегда true).
+            if (!ammo.Has(w.ammo, w.ammoPerShot)) return;
 
             int facing = pc != null ? pc.Facing : 1;
-            Vector2 dir = new Vector2(facing, 0f);
+            Vector2 baseDir = new Vector2(facing, 0f);
 
-            Vector2 muzzlePos = muzzle != null
-                ? (Vector2)muzzle.position
-                : (Vector2)transform.position + new Vector2(facing * 0.6f, 0.9f);
+            switch (w.kind)
+            {
+                case WeaponKind.Melee:
+                    DoMelee(w, facing);
+                    break;
 
-            Bullet b = BulletPool.Instance.Get();
-            b.Init(muzzlePos, dir, w.projectileSpeed, w.damage, w.range, w.knockback, targetMask);
+                case WeaponKind.Shotgun:
+                    if (!FireProjectiles(w, baseDir, facing, w.pellets)) return;
+                    break;
 
+                case WeaponKind.Gas:   // пока ведёт себя как Gun (одна пуля) — позже заменим облаком.
+                case WeaponKind.Gun:
+                default:
+                    if (!FireProjectiles(w, baseDir, facing, 1)) return;
+                    break;
+            }
+
+            // Патроны тратим и ставим кулдаун только если выстрел реально состоялся.
+            ammo.Use(w.ammo, w.ammoPerShot);
             cooldown = w.fireDelay;
         }
 
-        // Безопасный индекс в пределах списка (на случай правок в инспекторе).
-        int ClampIndex(int i)
+        // Стрельба снарядами через пул. count=1 → как Gun/Gas; count>1 → веер (Shotgun).
+        // Возвращает false, если пул недоступен (выстрел не состоялся — патроны не тратим).
+        bool FireProjectiles(WeaponSO w, Vector2 baseDir, int facing, int count)
         {
-            if (weapons == null || weapons.Count == 0) return 0;
-            return Mathf.Clamp(i, 0, weapons.Count - 1);
+            if (BulletPool.Instance == null) return false;
+
+            int pellets = Mathf.Max(1, count);
+            Vector2 muzzlePos = MuzzlePos(facing);
+
+            for (int i = 0; i < pellets; i++)
+            {
+                // Веер: поворот базового направления на (i - (pellets-1)/2) * spread радиан.
+                float angle = (pellets > 1)
+                    ? (i - (pellets - 1) * 0.5f) * w.spread
+                    : 0f;
+
+                Vector2 dir = (pellets > 1) ? Rotate(baseDir, angle) : baseDir;
+
+                Bullet b = BulletPool.Instance.Get();
+                if (b == null) continue;
+                b.Init(muzzlePos, dir, w.projectileSpeed, w.damage, w.range, w.knockback, targetMask);
+            }
+
+            return true;
+        }
+
+        // Мили-удар: OverlapBox перед игроком, урон каждому IDamageable на targetMask.
+        void DoMelee(WeaponSO w, int facing)
+        {
+            Vector2 center = (Vector2)transform.position
+                           + new Vector2(facing * w.meleeRange * 0.5f, 0.9f);
+            Vector2 size = new Vector2(Mathf.Max(0.01f, w.meleeRange), Mathf.Max(0.01f, w.meleeArc));
+            Vector2 knock = new Vector2(facing, 0f) * w.knockback;
+
+            ContactFilter2D filter = new ContactFilter2D { useTriggers = true };
+            filter.SetLayerMask(targetMask);
+            int n = Physics2D.OverlapBox(center, size, 0f, filter, MeleeHits);
+            for (int i = 0; i < n; i++)
+            {
+                Collider2D col = MeleeHits[i];
+                if (col == null) continue;
+
+                IDamageable target = col.GetComponent<IDamageable>();
+                if (target == null)
+                    target = col.GetComponentInParent<IDamageable>();
+
+                target?.TakeDamage(w.damage, knock);
+            }
+        }
+
+        // Точка вылета: muzzle, если задан; иначе смещение от центра игрока по Facing.
+        Vector2 MuzzlePos(int facing)
+        {
+            return muzzle != null
+                ? (Vector2)muzzle.position
+                : (Vector2)transform.position + new Vector2(facing * 0.6f, 0.9f);
+        }
+
+        // Поворот 2D-вектора на угол в радианах.
+        static Vector2 Rotate(Vector2 v, float radians)
+        {
+            float c = Mathf.Cos(radians);
+            float s = Mathf.Sin(radians);
+            return new Vector2(v.x * c - v.y * s, v.x * s + v.y * c);
         }
     }
 }
