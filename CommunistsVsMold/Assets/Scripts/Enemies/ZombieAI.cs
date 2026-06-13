@@ -67,7 +67,7 @@ namespace Kommunisty
             float dx = playerTf.position.x - selfX;
             float dist = Mathf.Abs(dx);
 
-            if (dist <= detectRange)
+            if (dist <= detectRange || GunfireAlarm.Hears(transform.position))
             {
                 // АГР: двигаемся к игроку.
                 facing = dx >= 0f ? 1 : -1;

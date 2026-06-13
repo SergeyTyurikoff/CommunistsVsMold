@@ -49,7 +49,7 @@ namespace Kommunisty
             float dy = playerTf.position.y - transform.position.y;
             float dist = Mathf.Abs(dx);
 
-            if (dist <= detectRange)
+            if (dist <= detectRange || GunfireAlarm.Hears(transform.position))
             {
                 facing = dx >= 0f ? 1 : -1;
                 rb.linearVelocity = new Vector2(facing * moveSpeed, rb.linearVelocity.y);

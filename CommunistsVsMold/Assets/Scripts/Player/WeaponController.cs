@@ -23,6 +23,7 @@ namespace Kommunisty
         [Header("Цель и точка выстрела")]
         [SerializeField] LayerMask targetMask;   // по кому пули/удар (слой Enemy)
         [SerializeField] Transform muzzle;        // откуда вылетают; если null — расчёт от Facing
+        [SerializeField] float noiseRadius = 16f; // на каком радиусе враги слышат выстрел
 
         PlayerController pc;
         AmmoInventory ammo;
@@ -49,6 +50,12 @@ namespace Kommunisty
                 return (w == null || ammo == null) ? 0 : ammo.Get(w.ammo);
             }
         }
+
+        /// <summary>Список оружия (для HUD-переключателя).</summary>
+        public IReadOnlyList<WeaponSO> Weapons => weapons;
+
+        /// <summary>Индекс текущего оружия в списке.</summary>
+        public int CurrentIndex => (weapons != null && weapons.Count > 0) ? Mathf.Clamp(current, 0, weapons.Count - 1) : -1;
 
         void Awake()
         {
@@ -119,6 +126,7 @@ namespace Kommunisty
             ammo.Use(w.ammo, w.ammoPerShot);
             cooldown = w.fireDelay;
             AudioManager.Instance?.PlayShot(w.kind, w.ammo);
+            GunfireAlarm.Report(transform.position, noiseRadius);   // враги слышат выстрел
         }
 
         // Стрельба снарядами через пул. count=1 → как Gun/Gas; count>1 → веер (Shotgun).
