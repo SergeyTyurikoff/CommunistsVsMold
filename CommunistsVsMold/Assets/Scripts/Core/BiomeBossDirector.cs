@@ -61,6 +61,7 @@ namespace Kommunisty
         /// </summary>
         public void SpawnBoss(int biome)
         {
+            if (biome < 1) return;   // биом 0 — обучение, без босса
             // Не плодим дубль — один живой босс за раз.
             if (BossController.Active != null) return;
             if (biomes == null || biomes.Length == 0) return;

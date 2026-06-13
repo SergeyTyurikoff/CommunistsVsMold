@@ -43,7 +43,7 @@ namespace Kommunisty
         void Awake()
         {
             Instance = this;
-            CurrentBiome = Mathf.Max(1, startBiome);
+            CurrentBiome = Mathf.Max(0, startBiome);   // 0 = биом обучения
             if (mainCamera == null) mainCamera = Camera.main;
 
             Vector3 cp = biomeStart != null
@@ -66,11 +66,18 @@ namespace Kommunisty
             if (player != null) player.SetRespawnPoint(pos);
         }
 
-        /// <summary>Перейти в следующий биом: игрок на старт, чекпойнт, лечение, фон, спавн врага.</summary>
-        public void NextBiome()
-        {
-            CurrentBiome++;
+        /// <summary>Перейти в следующий биом.</summary>
+        public void NextBiome() { CurrentBiome++; GoToCurrentBiome(); }
 
+        /// <summary>Перейти в предыдущий биом (не ниже 0) — dev-навигация.</summary>
+        public void PrevBiome() { CurrentBiome = Mathf.Max(0, CurrentBiome - 1); GoToCurrentBiome(); }
+
+        /// <summary>Перезапустить текущий биом (игрок на старт, лечение) — рестарт/dev.</summary>
+        public void RestartBiome() { GoToCurrentBiome(); }
+
+        // Общий переход: игрок на старт биома, чекпойнт, лечение, фон, (опц.) легаси-враг, событие.
+        void GoToCurrentBiome()
+        {
             Vector3 startPos = biomeStart != null
                 ? biomeStart.position
                 : (player != null ? player.transform.position : transform.position);
@@ -101,7 +108,7 @@ namespace Kommunisty
         void ApplyBiomeVisuals()
         {
             if (mainCamera != null && palette != null && palette.Length > 0)
-                mainCamera.backgroundColor = palette[(CurrentBiome - 1) % palette.Length];
+                mainCamera.backgroundColor = palette[Mathf.Max(0, CurrentBiome - 1) % palette.Length];
         }
 
         void OnDestroy()

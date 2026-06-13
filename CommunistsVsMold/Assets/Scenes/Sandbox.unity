@@ -655,6 +655,14 @@ MonoBehaviour:
       perBiome: 0
       oneOnly: 0
       spread: 2.2
+  - biome: 0
+    entries:
+    - label: "\u0417\u043E\u043C\u0431\u0438-\u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435"
+      prefab: {fileID: 3465420151331463324, guid: f262543afc1456540abd48c7ea7c8e7d, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2
   spawnPoint: {fileID: 1199528961}
   player: {fileID: 1188424186}
   heroLevel: 1
@@ -1590,7 +1598,7 @@ MonoBehaviour:
   player: {fileID: 1188424186}
   biomeStart: {fileID: 1181951535}
   mainCamera: {fileID: 2075945274}
-  startBiome: 1
+  startBiome: 0
   palette:
   - {r: 0.08, g: 0.08, b: 0.11, a: 1}
   - {r: 0.11, g: 0.07, b: 0.05, a: 1}
@@ -2060,6 +2068,77 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796687629}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &817022846
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 817022850}
+  - component: {fileID: 817022849}
+  - component: {fileID: 817022848}
+  - component: {fileID: 817022847}
+  m_Layer: 0
+  m_Name: GameSystems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &817022847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68fd8cc2df30fb744beaafca6128ca48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.GameUI
+--- !u!114 &817022848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f756c879208604e9aa3bf28b7b39f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.DevControls
+--- !u!114 &817022849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba32296120156b84e98bf4a9a3bddb97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.GameStats
+  Counting: 0
+--- !u!4 &817022850
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 817022846}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -3917,3 +3996,4 @@ SceneRoots:
   - {fileID: 1132224061}
   - {fileID: 370372478}
   - {fileID: 1986476294}
+  - {fileID: 817022850}
