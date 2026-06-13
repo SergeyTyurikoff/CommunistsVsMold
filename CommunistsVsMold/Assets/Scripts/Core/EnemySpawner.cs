@@ -27,8 +27,19 @@ namespace Kommunisty
             public float spread = 2f;        // шаг между экземплярами по X
         }
 
-        [Header("Ростер врагов")]
+        /// <summary>Набор врагов конкретного биома (переопределяет общий ростер).</summary>
+        [System.Serializable]
+        public class BiomeRoster
+        {
+            public int biome = 1;
+            public List<SpawnEntry> entries = new List<SpawnEntry>();
+        }
+
+        [Header("Ростер врагов (общий, если для биома нет своего)")]
         [SerializeField] List<SpawnEntry> roster = new List<SpawnEntry>();
+
+        [Tooltip("Наборы врагов по биомам: если для биома задан — используется вместо общего ростера.")]
+        [SerializeField] List<BiomeRoster> biomeRosters = new List<BiomeRoster>();
 
         [Header("Ссылки")]
         [SerializeField] Transform spawnPoint;        // откуда спавнить; null — перед игроком
@@ -99,6 +110,12 @@ namespace Kommunisty
             ClearSpawned();
 
             Vector3 basePos = GetBasePos();
+
+            // Набор врагов биома (если задан) — иначе общий ростер.
+            List<SpawnEntry> active = roster;
+            foreach (var br in biomeRosters)
+                if (br != null && br.biome == biome && br.entries != null && br.entries.Count > 0) { active = br.entries; break; }
+
             int boost = heroLevel - 1;
             // Если у игрока есть прокачка — биом-скейл считаем от его текущего уровня.
             if (player != null)
@@ -107,7 +124,7 @@ namespace Kommunisty
                 if (lvl != null) boost = lvl.Level - 1;
             }
 
-            foreach (var entry in roster)
+            foreach (var entry in active)
             {
                 if (entry == null || entry.prefab == null) continue;
 

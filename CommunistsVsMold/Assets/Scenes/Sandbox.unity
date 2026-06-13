@@ -151,19 +151,19 @@ MonoBehaviour:
   biomes:
   - name: "\u041B\u0435\u0441"
     bg: {r: 0, g: 0, b: 0, a: 1}
-    bossPrefab: {fileID: 0}
+    bossPrefab: {fileID: 5037542207913867202, guid: f1c7428b9aa96a946b18b34ef09c8dac, type: 3}
   - name: "\u0417\u0438\u043C\u0430"
     bg: {r: 0, g: 0, b: 0, a: 1}
-    bossPrefab: {fileID: 0}
+    bossPrefab: {fileID: 2104583904276299385, guid: b879aea8b298ce049be0fc5bb1b3ffd0, type: 3}
   - name: "\u041F\u0443\u0441\u0442\u044B\u043D\u044F"
     bg: {r: 0, g: 0, b: 0, a: 1}
-    bossPrefab: {fileID: 0}
+    bossPrefab: {fileID: 2260251291867910209, guid: 85a359faae0a31445bc8b537f61b3185, type: 3}
   - name: "\u0411\u043E\u043B\u043E\u0442\u043E"
     bg: {r: 0, g: 0, b: 0, a: 1}
-    bossPrefab: {fileID: 0}
+    bossPrefab: {fileID: 1700114984331050626, guid: 5e711c154534fcc4c8bcdf1126029cea, type: 3}
   - name: "\u0413\u043E\u0440\u043E\u0434"
     bg: {r: 0, g: 0, b: 0, a: 1}
-    bossPrefab: {fileID: 0}
+    bossPrefab: {fileID: 2913653830278185555, guid: 341632209db40144ca04e50694ff3404, type: 3}
   - name: "\u041C\u0430\u0432\u0437\u043E\u043B\u0435\u0439"
     bg: {r: 0, g: 0, b: 0, a: 1}
     bossPrefab: {fileID: 817788763507177654, guid: 302eb4381210e654a8ee7f3a5caf7215, type: 3}
@@ -534,6 +534,127 @@ MonoBehaviour:
     perBiome: 0
     oneOnly: 0
     spread: 2
+  biomeRosters:
+  - biome: 1
+    entries:
+    - label: "\u0417\u043E\u043C\u0431\u0438"
+      prefab: {fileID: 3465420151331463324, guid: f262543afc1456540abd48c7ea7c8e7d, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0411\u0435\u0433\u0443\u043D"
+      prefab: {fileID: 8077927246018097323, guid: e70c430986ab33040be7b890d6bdbb82, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0413\u0430\u0437\u043E\u0432\u0438\u043A"
+      prefab: {fileID: 3121689440067405933, guid: 83b3b1e77522dfe4dbf02f4880b89794, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+  - biome: 2
+    entries:
+    - label: "\u0429\u0438\u0442\u043E\u043D\u043E\u0441\u0435\u0446"
+      prefab: {fileID: 6353130697018854158, guid: ea7cb075db549484eada48f2df8275a6, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0421\u0430\u0431\u0435\u043B\u044C\u0449\u0438\u043A"
+      prefab: {fileID: 6864410309666460599, guid: 5154a30f04793984e8d536cdc0173262, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+  - biome: 3
+    entries:
+    - label: "\u0421\u0442\u0440\u0435\u043B\u043E\u043A"
+      prefab: {fileID: 186009384522366631, guid: 0a3e565ff384d0c47ac1ddf1d5a64cdb, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0421\u043D\u0430\u0439\u043F\u0435\u0440"
+      prefab: {fileID: 1956433724069728273, guid: 3295d7d2533dc7c4e86658efe5098889, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 1
+      spread: 2.2
+    - label: "\u0412\u0441\u0430\u0434\u043D\u0438\u043A"
+      prefab: {fileID: 87146489368684614, guid: a97ddca9318e0b5449185fa38516573e, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+  - biome: 4
+    entries:
+    - label: "\u0413\u0430\u0437\u043E\u0432\u0438\u043A"
+      prefab: {fileID: 3121689440067405933, guid: 83b3b1e77522dfe4dbf02f4880b89794, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u041A\u0430\u043C\u0438\u043A\u0430\u0434\u0437\u0435"
+      prefab: {fileID: 1649678546657787131, guid: f8a7acb69a2fd9241adc76c7011cbdff, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0417\u043E\u043C\u0431\u0438"
+      prefab: {fileID: 3465420151331463324, guid: f262543afc1456540abd48c7ea7c8e7d, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+  - biome: 5
+    entries:
+    - label: "\u0412\u0438\u043D\u0442\u043E\u0432\u043E\u0447\u043D\u0438\u043A"
+      prefab: {fileID: 4666331296028470981, guid: c3e32ad866c8df0428202c628dac394d, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0421\u0442\u0440\u0435\u043B\u043E\u043A"
+      prefab: {fileID: 186009384522366631, guid: 0a3e565ff384d0c47ac1ddf1d5a64cdb, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u041C\u0430\u043A\u0441\u0438\u043C"
+      prefab: {fileID: 4775897172141494880, guid: c095e99582c748f4cad27881eee6a3d1, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u041C\u0438\u043D\u0438\u0431\u043E\u0441\u0441"
+      prefab: {fileID: 6375979463971364559, guid: 0bbb84533536f244fa0b0b03e020f093, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+  - biome: 6
+    entries:
+    - label: "\u041C\u0438\u043D\u0438\u0431\u043E\u0441\u0441"
+      prefab: {fileID: 6375979463971364559, guid: 0bbb84533536f244fa0b0b03e020f093, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u041A\u0430\u043C\u0438\u043A\u0430\u0434\u0437\u0435"
+      prefab: {fileID: 1649678546657787131, guid: f8a7acb69a2fd9241adc76c7011cbdff, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
+    - label: "\u0411\u0435\u0433\u0443\u043D"
+      prefab: {fileID: 8077927246018097323, guid: e70c430986ab33040be7b890d6bdbb82, type: 3}
+      baseCount: 1
+      perBiome: 0
+      oneOnly: 0
+      spread: 2.2
   spawnPoint: {fileID: 1199528961}
   player: {fileID: 1188424186}
   heroLevel: 1
@@ -3547,6 +3668,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1986476292
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1986476294}
+  - component: {fileID: 1986476293}
+  m_Layer: 0
+  m_Name: BiomeVisuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1986476293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986476292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c343ba4245f7dbb449398bcd51ce8f1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.BiomeVisuals
+  backgroundRenderer: {fileID: 434860133}
+  biomeBackgrounds:
+  - {fileID: -1343518637512107228, guid: 309eccbdb11ae1f499e392c3afcac694, type: 3}
+  - {fileID: -5143454190132137567, guid: 426acc6a89b547949ae1a92dbcd7b96a, type: 3}
+  - {fileID: 603645287242772497, guid: c4fdcf817e181e8458b1874c31f81b3e, type: 3}
+  - {fileID: -8114127751195108233, guid: 3862b501c59ab234d890bbc87b580d7c, type: 3}
+  - {fileID: -1656166294940094332, guid: 4ace5f96dc41dfb4bae1dcd577e11941, type: 3}
+  - {fileID: -5036106366999985514, guid: c2a528079dc8fd443b4ab6d9f11d63db, type: 3}
+--- !u!4 &1986476294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986476292}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2075945272
 GameObject:
   m_ObjectHideFlags: 0
@@ -3743,3 +3916,4 @@ SceneRoots:
   - {fileID: 434860134}
   - {fileID: 1132224061}
   - {fileID: 370372478}
+  - {fileID: 1986476294}
