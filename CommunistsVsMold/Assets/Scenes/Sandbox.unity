@@ -667,7 +667,7 @@ MonoBehaviour:
   player: {fileID: 1188424186}
   heroLevel: 1
   aheadOffset: 6
-  autoSpawnOnBiome: 1
+  autoSpawnOnBiome: 0
 --- !u!4 &328023957
 Transform:
   m_ObjectHideFlags: 0
@@ -716,8 +716,8 @@ MonoBehaviour:
   zombiePrefab: {fileID: 3465420151331463324, guid: f262543afc1456540abd48c7ea7c8e7d, type: 3}
   waveSpawn: {fileID: 527447064}
   warningClock: {fileID: 82670237}
-  triggerX: 8
-  secondTriggerX: 10.5
+  triggerX: 46.9
+  secondTriggerX: 78.75
   countdown: 2.5
   baseWave: 3
   perBiome: 1
@@ -898,7 +898,7 @@ Transform:
   m_GameObject: {fileID: 370372474}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.5, y: 1, z: 0}
+  m_LocalPosition: {x: 5.8, y: 1, z: 0}
   m_LocalScale: {x: 0.6933333, y: 0.6933333, z: 0.6933333}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -922,7 +922,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!61 &379665194
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1136,7 +1136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!251 &424714678
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -1485,7 +1485,7 @@ Transform:
   m_GameObject: {fileID: 527447063}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11, y: 1, z: 0}
+  m_LocalPosition: {x: 48, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1798,7 +1798,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!251 &700464524
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -2537,7 +2537,7 @@ Transform:
   m_GameObject: {fileID: 1181951534}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 2.5, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2864,7 +2864,7 @@ Transform:
   m_GameObject: {fileID: 1199528960}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9, y: 1, z: 0}
+  m_LocalPosition: {x: 84, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3056,6 +3056,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1511ccae7919cfc46b603b9b337fdc94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.BaseInput
+--- !u!1 &1354762965
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1354762967}
+  - component: {fileID: 1354762966}
+  m_Layer: 0
+  m_Name: EnemyCatalog
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1354762966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354762965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328141fca395deb459702fcd4f28f6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.EnemyCatalog
+  entries:
+  - kind: zombie
+    prefab: {fileID: 3465420151331463324, guid: f262543afc1456540abd48c7ea7c8e7d, type: 3}
+  - kind: runner
+    prefab: {fileID: 8077927246018097323, guid: e70c430986ab33040be7b890d6bdbb82, type: 3}
+  - kind: pistol
+    prefab: {fileID: 186009384522366631, guid: 0a3e565ff384d0c47ac1ddf1d5a64cdb, type: 3}
+  - kind: gasman
+    prefab: {fileID: 3121689440067405933, guid: 83b3b1e77522dfe4dbf02f4880b89794, type: 3}
+  - kind: rifleman
+    prefab: {fileID: 4666331296028470981, guid: c3e32ad866c8df0428202c628dac394d, type: 3}
+  - kind: sabreur
+    prefab: {fileID: 6864410309666460599, guid: 5154a30f04793984e8d536cdc0173262, type: 3}
+  - kind: horse
+    prefab: {fileID: 87146489368684614, guid: a97ddca9318e0b5449185fa38516573e, type: 3}
+  - kind: gunner
+    prefab: {fileID: 186009384522366631, guid: 0a3e565ff384d0c47ac1ddf1d5a64cdb, type: 3}
+  - kind: kamikaze
+    prefab: {fileID: 1649678546657787131, guid: f8a7acb69a2fd9241adc76c7011cbdff, type: 3}
+  - kind: maxim
+    prefab: {fileID: 4775897172141494880, guid: c095e99582c748f4cad27881eee6a3d1, type: 3}
+  - kind: shielder
+    prefab: {fileID: 6353130697018854158, guid: ea7cb075db549484eada48f2df8275a6, type: 3}
+  - kind: sniper
+    prefab: {fileID: 1956433724069728273, guid: 3295d7d2533dc7c4e86658efe5098889, type: 3}
+  - kind: miniboss
+    prefab: {fileID: 6375979463971364559, guid: 0bbb84533536f244fa0b0b03e020f093, type: 3}
+--- !u!4 &1354762967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354762965}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1357832001
 GameObject:
   m_ObjectHideFlags: 0
@@ -3609,7 +3680,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!251 &1935088113
 PlatformEffector2D:
   m_ObjectHideFlags: 0
@@ -3908,6 +3979,58 @@ MonoBehaviour:
   offset: {x: 0, y: 1, z: -10}
   smoothTime: 0.15
   minY: -3
+--- !u!1 &2124096717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2124096719}
+  - component: {fileID: 2124096718}
+  m_Layer: 0
+  m_Name: LevelBuilder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2124096718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124096717}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f80dbe7e1626488468ee8d432cb3772f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.LevelBuilder
+  player: {fileID: 1188424186}
+  portal: {fileID: 875570819}
+  groundLayer: 8
+  oneWayLayer: 9
+  chestSprite: {fileID: -6834524911116659543, guid: c21c142a559027245ac6d4e7e3cf0eab, type: 3}
+  crateSprite: {fileID: -1655931761622821377, guid: 9a6d5236720b9f046afdf4e2a346df88, type: 3}
+  groundColor: {r: 0.16, g: 0.16, b: 0.2, a: 1}
+  skyColor: {r: 0.3, g: 0.3, b: 0.36, a: 1}
+--- !u!4 &2124096719
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124096717}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1197480859052493089
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3997,3 +4120,5 @@ SceneRoots:
   - {fileID: 370372478}
   - {fileID: 1986476294}
   - {fileID: 817022850}
+  - {fileID: 1354762967}
+  - {fileID: 2124096719}
