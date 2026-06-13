@@ -250,6 +250,14 @@ namespace Kommunisty
 
         public void Heal(float amount) => Health = Mathf.Min(maxHealth, Health + amount);
 
+        /// <summary>Поднять максимум здоровья (прокачка). По умолчанию доливает на ту же величину.</summary>
+        public void AddMaxHealth(float delta, bool heal = true)
+        {
+            if (delta <= 0f) return;
+            maxHealth += delta;
+            if (heal) Health = Mathf.Min(maxHealth, Health + delta);
+        }
+
         /// <summary>Газ-замедление: множитель скорости (×0.5) на duration сек. Повторные вызовы
         /// (пока игрок в облаке) рефрешат таймер. Урон НЕ наносит (PORT_SPEC §3).</summary>
         public void ApplySlow(float mult, float duration)

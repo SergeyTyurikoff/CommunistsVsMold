@@ -100,6 +100,12 @@ namespace Kommunisty
 
             Vector3 basePos = GetBasePos();
             int boost = heroLevel - 1;
+            // Если у игрока есть прокачка — биом-скейл считаем от его текущего уровня.
+            if (player != null)
+            {
+                var lvl = player.GetComponent<Leveling>();
+                if (lvl != null) boost = lvl.Level - 1;
+            }
 
             foreach (var entry in roster)
             {

@@ -101,6 +101,13 @@ namespace Kommunisty
             counts[k] = Mathf.Min(Max(k), current + n);
         }
 
+        /// <summary>Поднять ёмкость (макс) типа патронов на n (прокачка). Для None — ничего.</summary>
+        public void AddCapacity(AmmoKind k, int n)
+        {
+            if (k == AmmoKind.None || n <= 0) return;
+            maxes[k] = Max(k) + n;
+        }
+
         /// <summary>Максимум для типа патронов. Если не задан — большой дефолт. Для None — int.MaxValue.</summary>
         public int Max(AmmoKind k)
         {

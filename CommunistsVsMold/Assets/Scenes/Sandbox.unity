@@ -522,6 +522,18 @@ MonoBehaviour:
     perBiome: 0
     oneOnly: 0
     spread: 2
+  - label: "\u0411\u0435\u0433\u0443\u043D"
+    prefab: {fileID: 8077927246018097323, guid: e70c430986ab33040be7b890d6bdbb82, type: 3}
+    baseCount: 1
+    perBiome: 0
+    oneOnly: 0
+    spread: 2
+  - label: "\u0421\u0442\u0440\u0435\u043B\u043E\u043A"
+    prefab: {fileID: 186009384522366631, guid: 0a3e565ff384d0c47ac1ddf1d5a64cdb, type: 3}
+    baseCount: 1
+    perBiome: 0
+    oneOnly: 0
+    spread: 2
   spawnPoint: {fileID: 1199528961}
   player: {fileID: 1188424186}
   heroLevel: 1
@@ -2298,6 +2310,7 @@ MonoBehaviour:
   shopLabel: {fileID: 507571919}
   wallet: {fileID: 0}
   util: {fileID: 0}
+  lvl: {fileID: 0}
   shop: {fileID: 370372476}
 --- !u!1 &1181951534
 GameObject:
@@ -2347,6 +2360,7 @@ GameObject:
   - component: {fileID: 1188424192}
   - component: {fileID: 1188424194}
   - component: {fileID: 1188424193}
+  - component: {fileID: 1188424195}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2604,6 +2618,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.Wallet
   money: 18
   moneyMult: 0.5
+--- !u!114 &1188424195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188424185}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3170aa7e35043aa42a0d4a3666f435e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.Leveling
+  level: 1
+  xp: 0
+  xpNext: 70
+  baseKillXp: 15
+  healOnLevel: 38
+  maxHealthPerLevel: 12
+  ammoCapPerLevel: 6
+  machinegunCapPerLevel: 18
+  gasCapPerLevel: 10
 --- !u!1 &1199528960
 GameObject:
   m_ObjectHideFlags: 0
