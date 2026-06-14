@@ -74,13 +74,9 @@ namespace Kommunisty
                 playerInRange = dx <= nearRangeX && dy <= nearRangeY;
             }
             else playerInRange = false;
-            if (!playerInRange) return;
-
-            var kb = Keyboard.current;
-            if (kb == null) return;
-            if (kb.digit3Key.wasPressedThisFrame) Buy(0);
-            if (kb.digit4Key.wasPressedThisFrame) Buy(1);
-            if (kb.digit5Key.wasPressedThisFrame) Buy(2);
+            // Покупкой теперь управляет модальное окно ShopWindow (открывается по E):
+            // оно вызывает Buy() по клавишам 3/4/5, только когда окно открыто. Здесь —
+            // только определение близости к снабженцу (для подсказки и открытия окна).
         }
 
         /// <summary>Купить предложение i. Вернёт false, если нет денег/нет предложения.</summary>

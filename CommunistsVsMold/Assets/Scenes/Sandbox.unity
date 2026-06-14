@@ -296,6 +296,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &155109588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 155109590}
+  - component: {fileID: 155109589}
+  m_Layer: 0
+  m_Name: ShopWindow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &155109589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155109588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811fbca19f8388a4d93f710ee14453eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.ShopWindow
+--- !u!4 &155109590
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 155109588}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &303529496
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,6 +887,8 @@ MonoBehaviour:
     kind: 4
     amount: 12
     price: 18
+  nearRangeX: 1.8
+  nearRangeY: 3
 --- !u!61 &370372477
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2989,6 +3035,7 @@ MonoBehaviour:
   muzzle: {fileID: 0}
   noiseRadius: 16
   weaponVisual: {fileID: 1848013662}
+  handForwardX: 0.28
 --- !u!114 &1188424192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4496,3 +4543,4 @@ SceneRoots:
   - {fileID: 1354762967}
   - {fileID: 2124096719}
   - {fileID: 1368929372}
+  - {fileID: 155109590}

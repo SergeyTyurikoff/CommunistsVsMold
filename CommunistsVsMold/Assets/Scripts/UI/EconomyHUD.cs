@@ -59,12 +59,9 @@ namespace Kommunisty
 
         string BuildShop()
         {
-            sb.Length = 0;
-            sb.Append("МАГАЗИН:   ");
-            var o = shop.Offers;
-            for (int i = 0; i < o.Length && i < 3; i++)
-                sb.Append("[").Append(i + 3).Append("] ").Append(o[i].label).Append(" — ").Append(o[i].price).Append("    ");
-            return sb.ToString();
+            // Полный список товаров теперь в модальном окне ShopWindow (открывается по E) —
+            // в строке HUD только приглашение, чтобы не дублировать.
+            return ShopWindow.IsOpen ? "" : "Снабженец рядом — нажми E, чтобы открыть магазин";
         }
     }
 }
