@@ -27,6 +27,7 @@ namespace Kommunisty
 
         [Header("Визуал оружия")]
         [SerializeField] SpriteRenderer weaponVisual;   // дочерний "WeaponVisual" на Player, назначается в сцене
+        [SerializeField] float handForwardX = 0.28f;    // вынос оружия вперёд «в руку» по направлению взгляда
 
         PlayerController pc;
         AmmoInventory ammo;
@@ -110,6 +111,12 @@ namespace Kommunisty
             // Поворот по взгляду: отзеркаливаем через flipX, не трогая localScale дочернего объекта.
             int facing = pc != null ? pc.Facing : 1;
             weaponVisual.flipX = facing < 0;
+
+            // Выносим оружие вперёд по направлению взгляда (в руку), а не по центру тела.
+            // Высоту (localPosition.y) оставляем как выставлено в сцене.
+            var lp = weaponVisual.transform.localPosition;
+            lp.x = facing * handForwardX;
+            weaponVisual.transform.localPosition = lp;
         }
 
         // Выстрел текущим оружием: проверка кулдауна, наличия данных и патронов, затем стрельба по виду.
