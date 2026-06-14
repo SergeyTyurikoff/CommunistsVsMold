@@ -22,5 +22,8 @@ namespace Kommunisty
         public int ammoPerShot = 1;
         public float meleeRange = 1.2f;        // Melee
         public float meleeArc = 1.4f;          // Melee — ширина дуги (м)
+
+        [Tooltip("Спрайт оружия, рисуемый ПОВЕРХ героя (в руке)")]
+        public Sprite overlaySprite;           // визуал оружия на герое (weapon-overlay)
     }
 }

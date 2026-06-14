@@ -73,6 +73,17 @@ namespace Kommunisty
         public bool IsDodging => dodgeTimer > 0f;
         public bool IsInvulnerable => invulnTimer > 0f;
 
+        // --- Read-only геттеры состояния способностей для HUD (R24) ---
+        public bool TurboUnlocked => turboUnlocked;
+        public bool TimeStopUnlocked => timeStopUnlocked;
+        public bool DoubleJumpUnlocked => doubleJumpUnlocked;
+        public bool TurboActive => turboTimer > 0f;
+        // 1 = готово к использованию; во время отката < 1 (прогресс перезарядки)
+        public float TurboReady01 => turboCdTimer > 0f ? Mathf.Clamp01(1f - turboCdTimer / Mathf.Max(0.0001f, turboCooldown)) : 1f;
+        // доля оставшегося активного времени турбо (0..1), 0 если не активно
+        public float TurboActive01 => turboTimer > 0f ? Mathf.Clamp01(turboTimer / Mathf.Max(0.0001f, turboDuration)) : 0f;
+        public float DodgeReady01 => dodgeCdTimer > 0f ? Mathf.Clamp01(1f - dodgeCdTimer / Mathf.Max(0.0001f, dodgeCooldown)) : 1f;
+
         Rigidbody2D rb;
         SpriteRenderer sprite;
         Collider2D selfCol;
@@ -272,9 +283,12 @@ namespace Kommunisty
         {
             if (IsInvulnerable) return;
             Health = Mathf.Max(0f, Health - amount);
+            // i-frames после удара: 0.5 c неуязвимости — чтобы контакт с врагом/облаком газа
+            // не наносил урон и не тряс экран КАЖДЫЙ кадр (это и был источник постоянного
+            // «дёрганья» экрана). Перекат/стомп/респаун ставят свои значения invulnTimer.
+            invulnTimer = Mathf.Max(invulnTimer, 0.5f);
             GameFX.Instance?.Shake(0.12f, 0.12f);
             AudioManager.Instance?.PlayPlayerHit();
-            // TODO: откидывание/неуязвимость после удара
         }
 
         // Смерть игрока: фиксируем состояние, запускаем таймер респауна и фидбэк.

@@ -30,6 +30,19 @@ namespace Kommunisty
 
         GameObject geomRoot, entRoot;
         static Sprite unitSprite;
+        int builtBiome;   // биом, под который сейчас строится геометрия (для тинта кромок)
+
+        // Цвет верхней кромки платформы по биому (поверхностный «грунт»): лес→земля→холод→песок→багрянец→фиолет.
+        static readonly Color[] BiomeTints =
+        {
+            new Color(0.36f, 0.55f, 0.28f),
+            new Color(0.45f, 0.38f, 0.22f),
+            new Color(0.30f, 0.45f, 0.55f),
+            new Color(0.55f, 0.45f, 0.30f),
+            new Color(0.50f, 0.30f, 0.30f),
+            new Color(0.35f, 0.30f, 0.45f),
+        };
+        static Color BiomeTint(int b) => BiomeTints[Mathf.Clamp(b, 0, BiomeTints.Length - 1)];
 
         void Start()
         {
@@ -63,6 +76,7 @@ namespace Kommunisty
         public void Build(int biome)
         {
             var L = BiomeLayouts.Build(biome);
+            builtBiome = biome;
             EnsureUnitSprite();
 
             if (geomRoot != null) Destroy(geomRoot);
@@ -78,18 +92,31 @@ namespace Kommunisty
                     LevelMetrics.UX(L.portalX) + LevelMetrics.U(70) * 0.5f,
                     LevelMetrics.UY(L.portalY) - LevelMetrics.U(90) * 0.5f, 0f);
 
+            // Единый инвариант: ящики и сундуки СТОЯТ на земле — низ их коллайдера лежит
+            // на верхней грани земли (UY(485) = 0). Без ad-hoc сдвигов −0.3f: спавним на
+            // полу и доводим SnapBottomTo по реальным bounds (не зависит от пивота/масштаба).
+            float floorY = LevelMetrics.UY(LevelMetrics.GroundSurfaceWebY);
+
             foreach (var c in L.chests)
             {
-                var pos = new Vector3(LevelMetrics.UX(c.x), LevelMetrics.UY(c.y) - 0.3f, 0f);
+                var pos = new Vector3(LevelMetrics.UX(c.x), floorY, 0f);
                 var ch = Chest.Spawn(pos, c.loot, chestSprite);
-                if (ch != null) ch.transform.SetParent(entRoot.transform, true);
+                if (ch != null)
+                {
+                    ch.transform.SetParent(entRoot.transform, true);
+                    SnapBottomTo(ch.gameObject, floorY);
+                }
             }
 
             foreach (var c in L.crates)
             {
-                var pos = new Vector3(LevelMetrics.UX(c.x), LevelMetrics.UY(c.y) - 0.3f, 0f);
+                var pos = new Vector3(LevelMetrics.UX(c.x), floorY, 0f);
                 var cr = Crate.Spawn(pos, 1f, crateSprite);
-                if (cr != null) cr.transform.SetParent(entRoot.transform, true);
+                if (cr != null)
+                {
+                    cr.transform.SetParent(entRoot.transform, true);
+                    SnapBottomTo(cr.gameObject, floorY);
+                }
             }
 
             int boost = HeroBoost();
@@ -110,19 +137,15 @@ namespace Kommunisty
             float cx = LevelMetrics.UX(p.x) + w * 0.5f;
             float cy = LevelMetrics.UY(p.y) - h * 0.5f;
 
+            // Родитель несёт коллайдер + слой; масштаб оставляем 1, размеры задаём ЯВНО
+            // (у коллайдера и у дочерних спрайтов-слоёв), иначе слои наследовали бы scale.
             var go = new GameObject(p.sky ? "Sky" : "Ground");
             go.transform.SetParent(geomRoot.transform, true);
             go.transform.position = new Vector3(cx, cy, 0f);
-            go.transform.localScale = new Vector3(w, h, 1f);
             go.layer = p.sky ? oneWayLayer : groundLayer;
 
-            var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = unitSprite;
-            sr.color = p.sky ? skyColor : groundColor;
-            sr.sortingOrder = -10;
-
             var col = go.AddComponent<BoxCollider2D>();
-            col.size = Vector2.one;   // в локальных, множится на localScale → мир (w,h)
+            col.size = new Vector2(w, h);
 
             if (p.sky)
             {
@@ -130,6 +153,43 @@ namespace Kommunisty
                 eff.useOneWay = true;
                 col.usedByEffector = true;
             }
+
+            // Слой 1 — каменное тело платформы.
+            AddQuad(go.transform, "Body", w, h, 0f, p.sky ? skyColor : groundColor, -10);
+
+            // Слой 2 — верхняя кромка с биом-тинтом (читается как «грунт/поверхность»).
+            float topH = Mathf.Min(0.16f, h * 0.5f);
+            AddQuad(go.transform, "Top", w, topH, h * 0.5f - topH * 0.5f, BiomeTint(builtBiome), -9);
+
+            // Слой 3 — тонкий светлый блик сразу под кромкой (объём/край).
+            float glintH = Mathf.Min(0.05f, h * 0.2f);
+            AddQuad(go.transform, "Glint", w * 0.98f, glintH, h * 0.5f - topH - glintH * 0.5f,
+                    new Color(1f, 1f, 1f, 0.35f), -8);
+        }
+
+        // Дочерний спрайт-слой платформы: unitSprite, размер через localScale, смещение по локальному Y.
+        static void AddQuad(Transform parent, string name, float w, float h, float localY, Color color, int order)
+        {
+            var q = new GameObject(name);
+            q.transform.SetParent(parent, false);
+            q.transform.localPosition = new Vector3(0f, localY, 0f);
+            q.transform.localScale = new Vector3(w, h, 1f);
+            var sr = q.AddComponent<SpriteRenderer>();
+            sr.sprite = unitSprite;
+            sr.color = color;
+            sr.sortingOrder = order;
+        }
+
+        // Ставит объект так, чтобы НИЗ его коллайдера лёг ровно на пол floorY
+        // (единый инвариант «низ сущности = верх опоры»). Заменяет прежние
+        // магические сдвиги (−0.3f): работает при любом пивоте/масштабе спрайта.
+        static void SnapBottomTo(GameObject go, float floorY)
+        {
+            Physics2D.SyncTransforms();
+            var col = go.GetComponent<Collider2D>();
+            if (col == null) return;
+            float dy = floorY - col.bounds.min.y;
+            go.transform.position += new Vector3(0f, dy, 0f);
         }
 
         static void EnsureUnitSprite()

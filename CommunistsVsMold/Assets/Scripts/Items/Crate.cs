@@ -46,6 +46,13 @@ namespace Kommunisty
             var box = go.AddComponent<BoxCollider2D>();
             box.isTrigger = false;
 
+            // Kinematic Rigidbody2D: пуля бьёт через OnTriggerEnter2D, а Unity шлёт
+            // триггер-события только если в паре есть хотя бы один Rigidbody2D. Без него
+            // ящик (статичный коллайдер) не получал урон — «не ломался» от выстрела.
+            var rb = go.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.gravityScale = 0f;
+
             if (sprite != null)
             {
                 sr.sprite = sprite;

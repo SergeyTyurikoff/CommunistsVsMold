@@ -13,19 +13,42 @@ namespace Kommunisty
         [SerializeField] Vector3 offset = new Vector3(0f, 1f, -10f);
         [SerializeField] float smoothTime = 0.15f;
         [SerializeField] float minY = -3f;
+        [SerializeField] float deadZone = 0.06f;     // игнор микро-смещений цели → нет дрожи у стоящего игрока
+
+        [Header("Проекция (2D)")]
+        [SerializeField] bool forceOrthographic = true;     // 2D-платформер: камера ОБЯЗАНА быть ортографической
+        [SerializeField] float orthographicSize = 5.77f;    // ≈ прежний перспективный кадр (FOV 60 @ z=-10)
 
         Vector3 vel;
+        Vector3 followPos;       // «зафиксированная» позиция цели с учётом дедзоны
+        bool followInit;
 
         // Тряска экрана (screen shake). Тикает на unscaledDeltaTime, чтобы трясло даже при hit-stop.
         float shakeTimer;
         float shakeDur;
         float shakeMag;
 
+        void Awake()
+        {
+            // Перспективная камера на 2D-уровне даёт паразитный сдвиг/дрожь и неверный
+            // масштаб при движении по Z — принудительно делаем ортографической.
+            if (!forceOrthographic) return;
+            var c = GetComponent<Camera>();
+            if (c != null) { c.orthographic = true; c.orthographicSize = orthographicSize; }
+        }
+
         void LateUpdate()
         {
             if (target == null) return;
 
-            Vector3 desired = target.position + offset;
+            // Дедзона: следуем за целью, но не дёргаемся на её микро-колебаниях (когда игрок
+            // почти стоит, физика может давать субпиксельную дрожь позиции).
+            Vector3 tp = target.position;
+            if (!followInit) { followPos = tp; followInit = true; }
+            if (Mathf.Abs(tp.x - followPos.x) > deadZone) followPos.x = tp.x;
+            if (Mathf.Abs(tp.y - followPos.y) > deadZone) followPos.y = tp.y;
+
+            Vector3 desired = followPos + offset;
             if (desired.y < minY) desired.y = minY;
             desired.z = offset.z;
 
@@ -36,7 +59,7 @@ namespace Kommunisty
             if (shakeTimer > 0f)
             {
                 shakeTimer -= Time.unscaledDeltaTime;
-                if (shakeTimer < 0f) shakeTimer = 0f;
+                if (shakeTimer <= 0f) { shakeTimer = 0f; shakeMag = 0f; } // полный сброс амплитуды по окончании
                 float amt = (shakeDur > 0f) ? shakeMag * (shakeTimer / shakeDur) : 0f;
                 next.x += Random.Range(-amt, amt);
                 next.y += Random.Range(-amt, amt);

@@ -11,6 +11,9 @@ namespace Kommunisty
     {
         PlayerController pc;
 
+        // Чтобы тост «способность открыта» показывался один раз на каждую способность.
+        bool annDouble, annTurbo, annTime;
+
         void Awake()
         {
             var p = GameObject.FindWithTag("Player");
@@ -34,9 +37,9 @@ namespace Kommunisty
         void OnBiome(int biome)
         {
             if (pc == null) return;
-            if (biome >= 1) pc.UnlockDoubleJump();
-            if (biome >= 2) pc.UnlockTurbo();
-            if (biome >= 3) pc.UnlockTimeStop();
+            if (biome >= 1) { pc.UnlockDoubleJump(); if (!annDouble) { annDouble = true; Toast.Show("Открыто: двойной прыжок (W в воздухе)"); } }
+            if (biome >= 2) { pc.UnlockTurbo();      if (!annTurbo)  { annTurbo = true;  Toast.Show("Открыто: турбо (C)"); } }
+            if (biome >= 3) { pc.UnlockTimeStop();   if (!annTime)   { annTime = true;   Toast.Show("Открыто: стоп-время (F)"); } }
         }
     }
 }

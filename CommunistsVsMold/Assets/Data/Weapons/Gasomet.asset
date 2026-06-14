@@ -25,3 +25,4 @@ MonoBehaviour:
   ammoPerShot: 1
   meleeRange: 1.2
   meleeArc: 1.4
+  overlaySprite: {fileID: -1465802203658288078, guid: ea542ab418e56924a8a70f01a08fedd0, type: 3}

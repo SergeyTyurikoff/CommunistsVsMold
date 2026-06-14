@@ -25,6 +25,9 @@ namespace Kommunisty
         [SerializeField] Transform muzzle;        // откуда вылетают; если null — расчёт от Facing
         [SerializeField] float noiseRadius = 16f; // на каком радиусе враги слышат выстрел
 
+        [Header("Визуал оружия")]
+        [SerializeField] SpriteRenderer weaponVisual;   // дочерний "WeaponVisual" на Player, назначается в сцене
+
         PlayerController pc;
         AmmoInventory ammo;
         ComboTracker combo;
@@ -87,6 +90,26 @@ namespace Kommunisty
 
             if (firing)
                 Fire();
+
+            // Каждый кадр подгоняем визуал оружия под текущее оружие и направление взгляда.
+            UpdateWeaponVisual();
+        }
+
+        // Обновляет дочерний спрайт оружия (weapon-overlay): спрайт под текущее оружие,
+        // видимость и отзеркаливание по направлению взгляда героя. Полностью null-safe.
+        void UpdateWeaponVisual()
+        {
+            if (weaponVisual == null) return;
+
+            var w = CurrentWeapon;
+            weaponVisual.enabled = (w != null && w.overlaySprite != null);
+            if (!weaponVisual.enabled) return;
+
+            weaponVisual.sprite = w.overlaySprite;
+
+            // Поворот по взгляду: отзеркаливаем через flipX, не трогая localScale дочернего объекта.
+            int facing = pc != null ? pc.Facing : 1;
+            weaponVisual.flipX = facing < 0;
         }
 
         // Выстрел текущим оружием: проверка кулдауна, наличия данных и патронов, затем стрельба по виду.
