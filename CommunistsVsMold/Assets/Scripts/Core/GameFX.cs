@@ -177,6 +177,29 @@ namespace Kommunisty
             go.AddComponent<DamageNumber>().Init(0.7f);
         }
 
+        /// <summary>Метка хедшота: красная всплывающая надпись «ХЕДШОТ!».</summary>
+        public void Headshot(Vector2 pos)
+        {
+            var go = new GameObject("Headshot");
+            go.transform.position = (Vector3)pos + new Vector3(0f, 0.4f, 0f);
+
+            var tm = go.AddComponent<TextMesh>();
+            var font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            tm.font = font;
+            tm.text = "ХЕДШОТ!";
+            tm.fontSize = 44;
+            tm.characterSize = 0.05f;
+            tm.fontStyle = FontStyle.Bold;
+            tm.anchor = TextAnchor.MiddleCenter;
+            tm.color = new Color(1f, 0.32f, 0.2f, 1f);
+
+            var mr = go.GetComponent<MeshRenderer>();
+            if (font != null) mr.sharedMaterial = font.material;
+            mr.sortingOrder = 1250;
+
+            go.AddComponent<DamageNumber>().Init(0.6f);
+        }
+
         // ───────────────────────── Дульная вспышка ─────────────────────────
 
         /// <summary>Дульная вспышка: яркое вытянутое ядро + внешнее свечение + искры по направлению.</summary>

@@ -136,6 +136,7 @@ namespace Kommunisty
                 var sc = go.GetComponent<IBiomeScalable>();
                 if (sc != null) sc.ApplyBiomeScale(biome, boost);
                 if (go.GetComponent<EnemySpeech>() == null) go.AddComponent<EnemySpeech>();  // реплики над врагом
+                if (go.GetComponent<OverheadBar>() == null) go.AddComponent<OverheadBar>();   // полоса HP над врагом
             }
         }
 
@@ -237,9 +238,13 @@ namespace Kommunisty
         static void SnapBottomTo(GameObject go, float floorY)
         {
             Physics2D.SyncTransforms();
-            var col = go.GetComponent<Collider2D>();
-            if (col == null) return;
-            float dy = floorY - col.bounds.min.y;
+            // Ровняем по НИЗУ ВИДИМОЙ части (спрайт): у сундука круг-коллайдер меньше спрайта,
+            // и привязка по коллайдеру топила спрайт под платформу. Спрайт — то, что видит игрок.
+            var sr = go.GetComponentInChildren<SpriteRenderer>();
+            float bottom;
+            if (sr != null) bottom = sr.bounds.min.y;
+            else { var col = go.GetComponent<Collider2D>(); if (col == null) return; bottom = col.bounds.min.y; }
+            float dy = floorY - bottom;
             go.transform.position += new Vector3(0f, dy, 0f);
         }
 

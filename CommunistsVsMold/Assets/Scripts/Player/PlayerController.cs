@@ -174,9 +174,22 @@ namespace Kommunisty
             if (kb != null && (kb.sKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame) && IsGrounded)
                 TryDropThrough();
 
-            // Поворот спрайта
-            float h = HInput();
-            if (dodgeTimer <= 0f && h != 0) { Facing = (int)Mathf.Sign(h); if (sprite) sprite.flipX = Facing < 0; }
+            // Поворот спрайта — к курсору мыши (стрельба «куда наводишь»); фолбэк — по движению.
+            if (dodgeTimer <= 0f)
+            {
+                int face = Facing;
+                var mouse = Mouse.current;
+                var cam = Camera.main;
+                if (mouse != null && cam != null)
+                {
+                    Vector3 mw = cam.ScreenToWorldPoint(mouse.position.ReadValue());
+                    float ddx = mw.x - transform.position.x;
+                    if (Mathf.Abs(ddx) > 0.05f) face = ddx >= 0f ? 1 : -1;
+                }
+                else { float h = HInput(); if (h != 0) face = (int)Mathf.Sign(h); }
+                Facing = face;
+                if (sprite) sprite.flipX = Facing < 0;
+            }
         }
 
         // Ищет one-way платформу под ногами и временно отключает с ней столкновение.

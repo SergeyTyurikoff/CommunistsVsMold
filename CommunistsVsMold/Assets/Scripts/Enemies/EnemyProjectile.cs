@@ -38,14 +38,29 @@ namespace Kommunisty
             col.isTrigger = true;
             col.radius = 0.15f;
 
-            // Визуал: спрайт можно оставить null (рисуется только цвет), но цвет задаём.
+            // Визуал: ОБЯЗАТЕЛЬНО видимый спрайт — иначе снаряд невидим (SpriteRenderer без
+            // спрайта ничего не рисует), и игрок получает урон «из ниоткуда».
             var sr = go.AddComponent<SpriteRenderer>();
-            sr.color = color;
-            sr.sortingOrder = 5;
+            sr.sprite = Dot();
+            sr.color = (color.a > 0.1f) ? new Color(color.r, color.g, color.b, 1f)
+                                        : new Color(1f, 0.45f, 0.2f, 1f); // тёпло-красный по умолчанию
+            sr.sortingOrder = 60;
 
             var proj = go.AddComponent<EnemyProjectile>();
             proj.Init(dir, speed, damage, range);
             return proj;
+        }
+
+        // Видимый «снаряд»: белый 1px при PPU≈3 → ~0.32 юнита (под коллайдер r=0.15),
+        // масштаб transform не трогаем (иначе сожмётся коллайдер).
+        static Sprite dot;
+        static Sprite Dot()
+        {
+            if (dot != null) return dot;
+            var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+            tex.SetPixel(0, 0, Color.white); tex.Apply();
+            dot = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 3f);
+            return dot;
         }
 
         void Init(Vector2 d, float spd, float dmg, float rng)

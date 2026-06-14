@@ -72,7 +72,12 @@ namespace Kommunisty
 
             if (target != null)
             {
-                target.TakeDamage(damage, dir.normalized * knockback);
+                float dmg = damage;
+                // Зона попадания: верхняя ~28% коллайдера цели = хедшот (×2).
+                var b = other.bounds;
+                bool head = b.size.y > 0.01f && transform.position.y >= b.max.y - b.size.y * 0.28f;
+                if (head) { dmg *= 2f; GameFX.Instance?.Headshot(transform.position); }
+                target.TakeDamage(dmg, dir.normalized * knockback);
                 Despawn();
             }
         }

@@ -222,17 +222,18 @@ namespace Kommunisty
         // Множитель урона от комбо (1, если трекера нет).
         float ComboMult() => combo != null ? combo.Multiplier : 1f;
 
-        // Направление выстрела: горизонталь по Facing + наклон по ↑/↓ (диагонали).
+        // Направление выстрела — к курсору мыши («стреляй, куда наводишь»). Фолбэк — по Facing.
         Vector2 AimDir(int facing)
         {
-            var kb = Keyboard.current;
-            float ay = 0f;
-            if (kb != null)
+            var mouse = Mouse.current;
+            var cam = Camera.main;
+            if (mouse != null && cam != null)
             {
-                if (kb.upArrowKey.isPressed) ay += 1f;
-                if (kb.downArrowKey.isPressed || kb.sKey.isPressed) ay -= 1f;
+                Vector3 mw = cam.ScreenToWorldPoint(mouse.position.ReadValue());
+                Vector2 d = new Vector2(mw.x, mw.y) - MuzzlePos(facing);
+                if (d.sqrMagnitude > 0.0001f) return d.normalized;
             }
-            return Mathf.Abs(ay) < 0.01f ? new Vector2(facing, 0f) : new Vector2(facing, ay).normalized;
+            return new Vector2(facing, 0f);
         }
 
         // Поворот 2D-вектора на угол в радианах.
