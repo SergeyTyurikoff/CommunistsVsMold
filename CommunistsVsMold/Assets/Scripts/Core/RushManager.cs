@@ -43,6 +43,7 @@ namespace Kommunisty
         public RushPhase Phase { get; private set; } = RushPhase.Idle;
         public RushGoal Goal { get; private set; }
         public float Timer { get; private set; }     // отсчёт часов / таймер «продержаться»
+        public float WarnDuration => countdown;       // полная длительность предупреждения (для кругового таймера)
         public int Killed { get; private set; }
         public int WaveSize { get; private set; }
 

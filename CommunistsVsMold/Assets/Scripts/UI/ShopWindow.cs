@@ -18,6 +18,7 @@ namespace Kommunisty
 
         Shop shop;
         Wallet wallet;
+        AmmoInventory ammoInv;
         GameObject panel;
         Text moneyText, footerText;
         Text[] rows = new Text[9];
@@ -28,7 +29,7 @@ namespace Kommunisty
         void Update()
         {
             if (shop == null) shop = FindFirstObjectByType<Shop>();
-            if (wallet == null) { var p = GameObject.FindWithTag("Player"); if (p != null) wallet = p.GetComponent<Wallet>(); }
+            if (wallet == null || ammoInv == null) { var p = GameObject.FindWithTag("Player"); if (p != null) { wallet = p.GetComponent<Wallet>(); ammoInv = p.GetComponent<AmmoInventory>(); } }
             if (shop == null) return;
 
             var kb = Keyboard.current;
@@ -75,7 +76,14 @@ namespace Kommunisty
                 rows[i].gameObject.SetActive(has);
                 if (!has) continue;
                 bool owned = shop.IsOwned(o[i]);
-                rows[i].text = "[" + (i + 1) + "]   " + o[i].label + (owned ? "   — куплено" : "   —   " + o[i].price + " мон.");
+                // Для патронов показываем текущий запас [есть/макс].
+                string have = "";
+                if (ammoInv != null && o[i].weapon == null)
+                {
+                    var ak = Pickup.AmmoOf(o[i].kind);
+                    if (ak != AmmoKind.None) have = "  [" + ammoInv.Get(ak) + "/" + ammoInv.Max(ak) + "]";
+                }
+                rows[i].text = "[" + (i + 1) + "]   " + o[i].label + have + (owned ? "   — куплено" : "   —   " + o[i].price + " мон.");
                 rows[i].color = owned ? new Color(0.5f, 0.5f, 0.5f, 1f) : new Color(0.94f, 0.94f, 0.94f, 1f);
             }
         }

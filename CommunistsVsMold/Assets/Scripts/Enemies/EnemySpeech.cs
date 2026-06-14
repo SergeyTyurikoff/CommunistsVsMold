@@ -19,7 +19,7 @@ namespace Kommunisty
 
         [SerializeField] float detectRange = 8f;    // на этой дистанции враг «замечает» и говорит
         [SerializeField] float chatterRange = 14f;  // в этой зоне иногда болтает
-        [SerializeField] float headOffset = 2.4f;   // высота облачка над transform врага
+        [SerializeField] float headOffset = 3.3f;   // высота облачка над врагом (выше полосы HP, чтобы не перекрывать)
 
         Transform player;
         Transform bubble;       // корень облачка (не дочерний врагу)

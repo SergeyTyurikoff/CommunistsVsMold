@@ -137,6 +137,7 @@ namespace Kommunisty
                 if (sc != null) sc.ApplyBiomeScale(biome, boost);
                 if (go.GetComponent<EnemySpeech>() == null) go.AddComponent<EnemySpeech>();  // реплики над врагом
                 if (go.GetComponent<OverheadBar>() == null) { var hb = go.AddComponent<OverheadBar>(); hb.SetAlwaysShow(true); }  // полоса HP над врагом (всегда видна)
+                if (go.GetComponent<EnemyDeathFX>() == null) go.AddComponent<EnemyDeathFX>();   // гибы + кровь при смерти
             }
         }
 

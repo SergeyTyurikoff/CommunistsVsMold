@@ -32,8 +32,8 @@ namespace Kommunisty
         [SerializeField] float dodgeSpeed = 16f;
         [SerializeField] float dodgeDuration = 0.23f;   // ~14 кадров @60
         [SerializeField] float dodgeCooldown = 0.97f;   // ~58 кадров @60
-        [SerializeField] float dodgeDamage = 24f;       // урон врагам на пути переката
-        [SerializeField] float dodgeKnockback = 8f;     // отброс врагов рывком
+        [SerializeField] float dodgeDamage = 40f;       // урон врагам на пути переката
+        [SerializeField] float dodgeKnockback = 16f;    // отброс врагов рывком
 
         [Header("Турбо (C) — единственный режим, тратит здоровье")]
         [SerializeField] bool turboUnlocked = false;

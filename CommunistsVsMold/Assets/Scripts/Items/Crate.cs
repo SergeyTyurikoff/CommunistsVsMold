@@ -49,9 +49,13 @@ namespace Kommunisty
             // Kinematic Rigidbody2D: пуля бьёт через OnTriggerEnter2D, а Unity шлёт
             // триггер-события только если в паре есть хотя бы один Rigidbody2D. Без него
             // ящик (статичный коллайдер) не получал урон — «не ломался» от выстрела.
+            // Dynamic + gravity 0 + FreezeAll: тело неподвижно, но (в отличие от Kinematic)
+            // НАДЁЖНО генерирует триггер-контакты с пулей — поэтому ящик ломается выстрелом
+            // (Kinematic-vs-Kinematic триггер не срабатывал). Враги по той же причине Dynamic.
             var rb = go.AddComponent<Rigidbody2D>();
-            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.bodyType = RigidbodyType2D.Dynamic;
             rb.gravityScale = 0f;
+            rb.constraints = RigidbodyConstraints2D.FreezeAll;
 
             if (sprite != null)
             {
@@ -59,7 +63,11 @@ namespace Kommunisty
                 // Масштабируем так, чтобы высота спрайта стала ~worldSize юнитов.
                 float h = sprite.bounds.size.y;
                 go.transform.localScale = Vector3.one * (h > 0f ? worldSize / h : worldSize);
-                // BoxCollider2D без явного размера сам подстроится под спрайт.
+                // ВАЖНО: размер коллайдера задаём ЯВНО по спрайту. Авто-подгон BoxCollider2D
+                // случился при ДОБАВЛЕНИИ (когда спрайт был null) и дал size=0 → пули летели
+                // сквозь ящик, он не ломался. Задаём локальный размер = размер спрайта.
+                var bs = sprite.bounds.size;
+                box.size = new Vector2(Mathf.Max(0.1f, bs.x), Mathf.Max(0.1f, bs.y));
             }
             else
             {

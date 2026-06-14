@@ -177,6 +177,52 @@ namespace Kommunisty
             go.AddComponent<DamageNumber>().Init(0.7f);
         }
 
+        /// <summary>Брызги крови на экран: несколько красных пятен, плавно гаснут.</summary>
+        public void BloodSplat(int blobs = 5)
+        {
+            var cgo = new GameObject("BloodSplat", typeof(Canvas), typeof(CanvasGroup));
+            var canvas = cgo.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 200;
+
+            for (int i = 0; i < blobs; i++)
+            {
+                var b = new GameObject("blob", typeof(RectTransform), typeof(UnityEngine.UI.Image));
+                b.transform.SetParent(cgo.transform, false);
+                var rt = b.GetComponent<RectTransform>();
+                rt.anchorMin = rt.anchorMax = new Vector2(Random.value, Random.value);
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                float s = Random.Range(70f, 180f);
+                rt.sizeDelta = new Vector2(s, s);
+                var img = b.GetComponent<UnityEngine.UI.Image>();
+                img.sprite = CircleSprite();
+                img.color = new Color(Random.Range(0.45f, 0.7f), 0.02f, 0.02f, Random.Range(0.35f, 0.6f));
+            }
+
+            var cg = cgo.GetComponent<CanvasGroup>();
+            cgo.AddComponent<CanvasFade>().Init(cg, 0.7f);
+        }
+
+        // Мягкий круг для брызг/пятен (радиальный спад прозрачности к краю).
+        static Sprite circleSprite;
+        static Sprite CircleSprite()
+        {
+            if (circleSprite != null) return circleSprite;
+            const int S = 32;
+            var tex = new Texture2D(S, S, TextureFormat.RGBA32, false);
+            float c = (S - 1) * 0.5f;
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    float d = Mathf.Sqrt((x - c) * (x - c) + (y - c) * (y - c)) / c;
+                    float a = Mathf.Clamp01(1f - d);
+                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
+                }
+            tex.Apply();
+            circleSprite = Sprite.Create(tex, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f), S);
+            return circleSprite;
+        }
+
         /// <summary>Метка хедшота: красная всплывающая надпись «ХЕДШОТ!».</summary>
         public void Headshot(Vector2 pos)
         {
@@ -283,6 +329,20 @@ namespace Kommunisty
             var c = baseColor;
             c.a = baseColor.a * k;
             sr.color = c;
+        }
+    }
+
+    /// <summary>Затухание CanvasGroup (брызги крови) и самоуничтожение.</summary>
+    public class CanvasFade : MonoBehaviour
+    {
+        CanvasGroup cg;
+        float life = 0.7f, t;
+        public void Init(CanvasGroup group, float l) { cg = group; life = l > 0f ? l : 0.7f; Destroy(gameObject, life); }
+        void Update()
+        {
+            if (cg == null) return;
+            t += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Clamp01(1f - t / life);
         }
     }
 
