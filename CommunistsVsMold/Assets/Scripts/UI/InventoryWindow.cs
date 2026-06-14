@@ -55,10 +55,11 @@ namespace Kommunisty
                 if (!has) continue;
                 var w = ws[i];
                 string name = w != null ? w.displayName : "—";
-                string ammoStr = (w == null || w.ammo == AmmoKind.None) ? "—"
-                               : (ammo != null ? ammo.Get(w.ammo).ToString() : "?") + " патр.";
+                string desc = w != null ? w.desc : "";
+                string ammoStr = (w == null || w.ammo == AmmoKind.None) ? ""
+                               : "  [" + (ammo != null ? ammo.Get(w.ammo).ToString() : "?") + "]";
                 bool active = i == cur;
-                rows[i].text = (active ? "▶ " : "•  ") + name + "      " + ammoStr;
+                rows[i].text = (active ? "▶ " : "•  ") + name + ammoStr + (string.IsNullOrEmpty(desc) ? "" : "  —  " + desc);
                 rows[i].color = active ? new Color(1f, 0.82f, 0.11f) : new Color(0.93f, 0.93f, 0.93f);
             }
         }

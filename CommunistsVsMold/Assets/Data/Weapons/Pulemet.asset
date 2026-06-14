@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Pulemet
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponSO
   displayName: "\u041F\u0443\u043B\u0435\u043C\u0451\u0442"
+  desc: "\u0431\u044B\u0441\u0442\u0440\u043E \u0436\u0440\u0451\u0442 \u043F\u0443\u043B\u0435\u043C\u0451\u0442\u043D\u044B\u0435
+    \u043F\u0430\u0442\u0440\u043E\u043D\u044B"
   kind: 0
   ammo: 3
   damage: 10

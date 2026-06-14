@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Obrez
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponSO
   displayName: "\u041E\u0431\u0440\u0435\u0437"
+  desc: "\u043A\u0430\u0440\u0442\u0435\u0447\u044C, \u043A\u043E\u043D\u0443\u0441\u043D\u044B\u0439
+    \u0432\u044B\u0441\u0442\u0440\u0435\u043B"
   kind: 1
   ammo: 4
   damage: 9

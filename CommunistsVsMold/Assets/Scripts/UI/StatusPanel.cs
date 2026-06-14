@@ -125,6 +125,16 @@ namespace Kommunisty
             // Полоса опыта (низ справа) + подпись.
             MakeBar(pt, new Vector2(170f, 14f), new Vector2(122f, 11f), out xpFill, new Color(0.48f,0.84f,0.16f));
             xpText = Label(pt, font, 10, new Color(0.71f,0.95f,0.42f), TextAnchor.LowerLeft, FontStyle.Bold, new Vector2(170f, 26f), new Vector2(140f, 14f));
+
+            // Версия в дальнем нижнем-правом углу (тускло), как метка билда.
+            var ver = new GameObject("Version", typeof(RectTransform), typeof(Text));
+            ver.transform.SetParent(cgo.transform, false);
+            var vrt = ver.GetComponent<RectTransform>();
+            vrt.anchorMin = vrt.anchorMax = new Vector2(1f, 0f); vrt.pivot = new Vector2(1f, 0f);
+            vrt.sizeDelta = new Vector2(120f, 16f); vrt.anchoredPosition = new Vector2(-8f, 4f);
+            var vt = ver.GetComponent<Text>();
+            vt.font = font; vt.fontSize = 11; vt.color = new Color(1f, 1f, 1f, 0.35f);
+            vt.alignment = TextAnchor.LowerRight; vt.text = "V 1.4.0";
         }
 
         // Полоса: фон + заливка (Filled Horizontal). Якорь — низ-лево панели; pos — от низ-лево.

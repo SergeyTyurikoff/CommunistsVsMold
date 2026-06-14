@@ -10,6 +10,7 @@ namespace Kommunisty
     public class WeaponSO : ScriptableObject
     {
         public string displayName = "Оружие";
+        [TextArea] public string desc = "";    // краткое описание для окна инвентаря/магазина
         public WeaponKind kind = WeaponKind.Gun;
         public AmmoKind ammo = AmmoKind.Pistol;
         public float damage = 18f;

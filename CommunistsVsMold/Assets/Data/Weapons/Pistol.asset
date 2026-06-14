@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Pistol
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponSO
   displayName: "\u041F\u0438\u0441\u0442\u043E\u043B\u0435\u0442"
+  desc: "\u043A\u043E\u0440\u043E\u0442\u043A\u0430\u044F \u0434\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u044F,
+    \u0431\u044B\u0441\u0442\u0440\u044B\u0439 \u0442\u0435\u043C\u043F"
   kind: 0
   ammo: 1
   damage: 18

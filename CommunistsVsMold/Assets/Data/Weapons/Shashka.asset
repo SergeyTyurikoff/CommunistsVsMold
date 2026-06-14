@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Shashka
   m_EditorClassIdentifier: Assembly-CSharp::Kommunisty.WeaponSO
   displayName: "\u0428\u0430\u0448\u043A\u0430"
+  desc: "\u0431\u043B\u0438\u0436\u043D\u0438\u0439 \u0431\u043E\u0439, \u0440\u0438\u0441\u043A\u043E\u0432\u0430\u043D\u043D\u043E,
+    \u0431\u0435\u0437 \u043F\u0430\u0442\u0440\u043E\u043D\u043E\u0432"
   kind: 2
   ammo: 0
   damage: 200
