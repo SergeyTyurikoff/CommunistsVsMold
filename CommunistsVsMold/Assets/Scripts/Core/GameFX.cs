@@ -179,20 +179,57 @@ namespace Kommunisty
 
         // ───────────────────────── Дульная вспышка ─────────────────────────
 
-        /// <summary>Короткая дульная вспышка в точке выстрела (быстро гаснет).</summary>
+        /// <summary>Дульная вспышка: яркое вытянутое ядро + внешнее свечение + искры по направлению.</summary>
         public void MuzzleFlash(Vector2 pos, int facing)
         {
             EnsureGibSprite();
-            var go = new GameObject("MuzzleFlash");
-            go.transform.position = (Vector3)pos;
-            go.transform.localScale = Vector3.one * 0.6f;
 
+            // Ядро — вытянуто по направлению выстрела, яркое.
+            var core = new GameObject("MuzzleFlash");
+            core.transform.position = (Vector3)pos;
+            core.transform.localScale = new Vector3(0.95f * (facing < 0 ? -1f : 1f), 0.5f, 1f);
+            var sr = core.AddComponent<SpriteRenderer>();
+            sr.sprite = gibSprite; sr.color = new Color(1f, 0.96f, 0.65f, 0.95f); sr.sortingOrder = 950;
+            core.AddComponent<GibFade>().Init(0.07f);
+
+            // Внешнее свечение — крупнее и теплее, тусклее.
+            var glow = new GameObject("MuzzleGlow");
+            glow.transform.position = (Vector3)pos;
+            glow.transform.localScale = Vector3.one * 0.8f;
+            var gsr = glow.AddComponent<SpriteRenderer>();
+            gsr.sprite = gibSprite; gsr.color = new Color(1f, 0.6f, 0.15f, 0.5f); gsr.sortingOrder = 949;
+            glow.AddComponent<GibFade>().Init(0.1f);
+
+            // Искры, летящие по направлению выстрела.
+            for (int i = 0; i < 3; i++)
+            {
+                var sp = new GameObject("Spark");
+                sp.transform.position = (Vector3)pos;
+                float s = Random.Range(0.06f, 0.12f);
+                sp.transform.localScale = new Vector3(s, s, 1f);
+                var ssr = sp.AddComponent<SpriteRenderer>();
+                ssr.sprite = gibSprite; ssr.color = new Color(1f, 0.85f, 0.4f, 0.9f); ssr.sortingOrder = 951;
+                var rb = sp.AddComponent<Rigidbody2D>();
+                rb.gravityScale = 0.5f;
+                rb.linearVelocity = new Vector2((facing < 0 ? -1f : 1f) * Random.Range(6f, 11f), Random.Range(-2.5f, 2.5f));
+                sp.AddComponent<GibFade>().Init(0.15f);
+            }
+        }
+
+        /// <summary>Трассер: яркая короткая полоса по направлению выстрела (быстро гаснет).</summary>
+        public void Tracer(Vector2 from, Vector2 dir)
+        {
+            if (dir.sqrMagnitude < 0.0001f) return;
+            EnsureGibSprite();
+            dir = dir.normalized;
+            const float len = 1.15f;
+            var go = new GameObject("Tracer");
+            go.transform.position = (Vector3)(from + dir * (len * 0.5f));
+            go.transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+            go.transform.localScale = new Vector3(len, 0.08f, 1f);
             var sr = go.AddComponent<SpriteRenderer>();
-            sr.sprite = gibSprite;
-            sr.color = new Color(1f, 0.9f, 0.4f, 0.9f);
-            sr.sortingOrder = 900;
-
-            go.AddComponent<GibFade>().Init(0.09f);
+            sr.sprite = gibSprite; sr.color = new Color(1f, 0.92f, 0.5f, 0.85f); sr.sortingOrder = 940;
+            go.AddComponent<GibFade>().Init(0.06f);
         }
     }
 

@@ -180,6 +180,7 @@ namespace Kommunisty
                 Bullet b = BulletPool.Instance.Get();
                 if (b == null) continue;
                 b.Init(muzzlePos, dir, w.projectileSpeed, w.damage * ComboMult(), w.range, w.knockback, targetMask);
+                GameFX.Instance?.Tracer(muzzlePos, dir);   // яркая трасса по направлению
             }
 
             GameFX.Instance?.MuzzleFlash(MuzzlePos(facing), facing);

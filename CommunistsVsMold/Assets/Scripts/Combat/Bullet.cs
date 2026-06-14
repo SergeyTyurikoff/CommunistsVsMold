@@ -17,6 +17,12 @@ namespace Kommunisty
         private float maxDist;
         private float travelled;
         private LayerMask targetMask;
+        private SpriteRenderer sr;
+
+        private void Awake()
+        {
+            sr = GetComponent<SpriteRenderer>();
+        }
 
         /// <summary>
         /// Инициализация снаряда из пула/оружия. Включает объект, задаёт позицию,
@@ -37,6 +43,9 @@ namespace Kommunisty
             // Поворот спрайта по направлению полёта (z-rotation).
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+            // Яркий «трассирующий» цвет пули (цвет не влияет на коллайдер).
+            if (sr != null) sr.color = new Color(1f, 0.9f, 0.4f, 1f);
 
             gameObject.SetActive(true);
         }

@@ -27,8 +27,10 @@ namespace Kommunisty
                 // Если в этом кадре здоровье уменьшилось — вспышка урона.
                 if (hasPrev && hp < prevHealth && damageFlash != null)
                 {
+                    // Лёгкая вспышка урона: в оригинале фидбэк тонкий. Полноэкранный красный
+                    // на 0.4 был слишком агрессивным («экран залит красным») — снижаем до 0.16.
                     var c = damageFlash.color;
-                    c.a = 0.4f;
+                    c.a = 0.16f;
                     damageFlash.color = c;
                 }
 
