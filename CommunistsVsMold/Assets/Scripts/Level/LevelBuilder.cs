@@ -135,6 +135,7 @@ namespace Kommunisty
                 var go = Instantiate(pf, pos, Quaternion.identity, entRoot.transform);
                 var sc = go.GetComponent<IBiomeScalable>();
                 if (sc != null) sc.ApplyBiomeScale(biome, boost);
+                if (go.GetComponent<EnemySpeech>() == null) go.AddComponent<EnemySpeech>();  // реплики над врагом
             }
         }
 
