@@ -134,6 +134,9 @@ namespace Kommunisty
                 return;
             }
 
+            // Во время катсцены управление отключено — персонажем двигает сценарий.
+            if (CutsceneManager.IsPlaying) return;
+
             Tick(ref coyoteTimer, dt);
             Tick(ref jumpBufferTimer, dt);
             Tick(ref dodgeCdTimer, dt);
@@ -260,6 +263,9 @@ namespace Kommunisty
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
+
+            // Катсцена: физику игрока не двигаем (позицией управляет сценарий).
+            if (CutsceneManager.IsPlaying) { if (rb != null) rb.linearVelocity = Vector2.zero; return; }
 
             // Перекат — фиксированная скорость, без гравитации по горизонтали
             if (dodgeTimer > 0f)

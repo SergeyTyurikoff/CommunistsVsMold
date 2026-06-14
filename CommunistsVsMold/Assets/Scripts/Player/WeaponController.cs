@@ -84,6 +84,9 @@ namespace Kommunisty
             if (cooldown > 0f)
                 cooldown -= Time.deltaTime;
 
+            // Во время катсцены стрельба/смена оружия от игрока отключены.
+            if (CutsceneManager.IsPlaying) { UpdateWeaponVisual(); return; }
+
             if (weapons == null || weapons.Count == 0)
                 return;
 
