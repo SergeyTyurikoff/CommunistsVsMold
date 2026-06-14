@@ -107,8 +107,20 @@ namespace Kommunisty
 
         void ApplyBiomeVisuals()
         {
-            if (mainCamera != null && palette != null && palette.Length > 0)
-                mainCamera.backgroundColor = palette[Mathf.Max(0, CurrentBiome - 1) % palette.Length];
+            if (mainCamera != null)
+            {
+                mainCamera.backgroundColor = (CurrentBiome == 0)
+                    ? new Color(0.14f, 0.04f, 0.04f)   // Мавзолей — тёмно-красный фон
+                    : (palette != null && palette.Length > 0 ? palette[Mathf.Max(0, CurrentBiome - 1) % palette.Length] : Color.black);
+            }
+
+            // Параллакс-фон: в Мавзолее (локация 0) тонируем кирпично-красным, чтобы не был лесом.
+            var bg = FindAnyObjectByType<ParallaxBackground>();
+            if (bg != null)
+            {
+                var sr = bg.GetComponent<SpriteRenderer>();
+                if (sr != null) sr.color = (CurrentBiome == 0) ? new Color(0.5f, 0.22f, 0.18f, 1f) : Color.white;
+            }
         }
 
         void OnDestroy()

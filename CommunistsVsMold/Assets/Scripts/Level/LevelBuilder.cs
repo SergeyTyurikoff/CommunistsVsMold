@@ -37,6 +37,10 @@ namespace Kommunisty
         static readonly Color GroundStone = new Color(0.145f, 0.145f, 0.188f, 1f);
         static readonly Color SkyStone    = new Color(0.188f, 0.188f, 0.227f, 1f);
 
+        // Мавзолей (локация 0) — красный кирпич: тело #5a2424, поверхность-кромка #8a3a30.
+        static readonly Color MausoleumStone   = new Color(0.353f, 0.141f, 0.141f, 1f);
+        static readonly Color MausoleumSurface = new Color(0.541f, 0.227f, 0.188f, 1f);
+
         // Точные цвета верхней полосы-«грунта» по уровню (world.js surfColor, levelIndex 0..5):
         // лес #3a5228, снег #a0b8c2, песок #8a6038, болото #2a5038, завод #404050, плесень #5a2020.
         static readonly Color[] SurfaceColors =
@@ -172,12 +176,14 @@ namespace Kommunisty
             bsr.sprite = stoneTile;
             bsr.drawMode = SpriteDrawMode.Tiled;   // повтор тайла по размеру → стыки каждые 32px (1 юнит)
             bsr.size = new Vector2(w, h);
-            bsr.color = p.sky ? SkyStone : GroundStone;
+            bool mausoleum = builtBiome == 0;      // локация 0 — Мавзолей (красный кирпич)
+            bsr.color = mausoleum ? MausoleumStone : (p.sky ? SkyStone : GroundStone);
             bsr.sortingOrder = -10;
 
-            // Слой 2 — верхняя полоса-«грунт» с точным цветом биома.
+            // Слой 2 — верхняя полоса-«грунт»/кромка.
             float topH = Mathf.Min(0.16f, h * 0.5f);
-            AddQuad(go.transform, "Top", w, topH, 0f, h * 0.5f - topH * 0.5f, SurfaceColor(builtBiome), -9);
+            Color topColor = mausoleum ? MausoleumSurface : SurfaceColor(builtBiome);
+            AddQuad(go.transform, "Top", w, topH, 0f, h * 0.5f - topH * 0.5f, topColor, -9);
 
             // Слой 3 — тонкий светлый блик кромки.
             float glintH = Mathf.Min(0.05f, h * 0.2f);

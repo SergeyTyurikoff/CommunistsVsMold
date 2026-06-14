@@ -3,32 +3,41 @@ using UnityEngine;
 namespace Kommunisty
 {
     /// <summary>
-    /// Портал-выход в конце биома. Триггер: когда в него входит игрок — переход в следующий биом
-    /// через <see cref="BiomeManager"/>. Есть антидребезг, чтобы не сработать дважды за переход.
-    /// Нужен Collider2D с isTrigger = true.
+    /// Переход в следующую локацию — НЕВИДИМЫЙ край справа (без портала): когда игрок доходит
+    /// до правого края локации (позиция этого объекта ставится LevelBuilder в конец уровня),
+    /// идёт переход через <see cref="BiomeManager"/>. Во время катсцены переход не срабатывает.
     /// </summary>
-    [RequireComponent(typeof(Collider2D))]
     public class ExitPortal : MonoBehaviour
     {
         [SerializeField] float rearmDelay = 1f;  // антидребезг между срабатываниями
         float lockUntil;
+        Transform player;
 
-        void Reset()
+        void Awake()
         {
-            var c = GetComponent<Collider2D>();
-            if (c != null) c.isTrigger = true;
+            // Порталов больше нет — прячем любой визуал/коллайдер.
+            foreach (var sr in GetComponentsInChildren<SpriteRenderer>(true)) sr.enabled = false;
+            var col = GetComponent<Collider2D>();
+            if (col != null) col.enabled = false;
+            lockUntil = Time.time + rearmDelay;   // не сработать сразу на старте
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+        void Update()
         {
             if (Time.time < lockUntil) return;
-
-            var player = other.GetComponentInParent<PlayerController>();
-            if (player == null) return;
+            if (CutsceneManager.IsPlaying) return;
             if (BiomeManager.Instance == null) return;
-
-            lockUntil = Time.time + rearmDelay;
-            BiomeManager.Instance.NextBiome();
+            if (player == null)
+            {
+                var p = GameObject.FindWithTag("Player");
+                if (p != null) player = p.transform; else return;
+            }
+            // Дошёл до правого края локации → следующая локация.
+            if (player.position.x >= transform.position.x)
+            {
+                lockUntil = Time.time + rearmDelay;
+                BiomeManager.Instance.NextBiome();
+            }
         }
     }
 }
