@@ -10,7 +10,7 @@ namespace Kommunisty
     public class Crate : MonoBehaviour, IDamageable
     {
         [Header("Прочность")]
-        [SerializeField] private float hp = 20f;
+        [SerializeField] private float hp = 12f;   // 1 выстрел пистолета (18) ломает
 
         [Header("Лут")]
         [Tooltip("Минимум денег при разрушении (включительно).")]

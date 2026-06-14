@@ -923,14 +923,47 @@ MonoBehaviour:
     kind: 1
     amount: 1
     price: 20
+    weapon: {fileID: 0}
   - label: "\u041F\u0430\u0442\u0440\u043E\u043D\u044B \u043F\u0438\u0441\u0442\u043E\u043B\u0435\u0442"
     kind: 3
     amount: 24
-    price: 12
+    price: 10
+    weapon: {fileID: 0}
   - label: "\u041F\u0430\u0442\u0440\u043E\u043D\u044B \u0432\u0438\u043D\u0442\u043E\u0432\u043A\u0430"
     kind: 4
     amount: 12
+    price: 14
+    weapon: {fileID: 0}
+  - label: "\u041F\u0430\u0442\u0440\u043E\u043D\u044B \u043F\u0443\u043B\u0435\u043C\u0451\u0442"
+    kind: 5
+    amount: 45
+    price: 14
+    weapon: {fileID: 0}
+  - label: "\u041F\u0430\u0442\u0440\u043E\u043D\u044B \u0434\u0440\u043E\u0431\u044C"
+    kind: 6
+    amount: 8
     price: 18
+    weapon: {fileID: 0}
+  - label: "\u041F\u0443\u043B\u0435\u043C\u0451\u0442"
+    kind: 0
+    amount: 0
+    price: 26
+    weapon: {fileID: 11400000, guid: 359936268f26c2242ae720691a3a4939, type: 2}
+  - label: "\u0413\u0430\u0437\u043E\u043C\u0451\u0442"
+    kind: 0
+    amount: 0
+    price: 38
+    weapon: {fileID: 11400000, guid: 6a38b7148810ebf43a66c4d5c3c4cd01, type: 2}
+  - label: "\u0428\u0430\u0448\u043A\u0430"
+    kind: 0
+    amount: 0
+    price: 24
+    weapon: {fileID: 11400000, guid: 3dc288b0d46af2d4e8248618c6452522, type: 2}
+  - label: "\u041E\u0431\u0440\u0435\u0437"
+    kind: 0
+    amount: 0
+    price: 48
+    weapon: {fileID: 11400000, guid: 17068fae6a00a394c9fe6ee21b19779e, type: 2}
   nearRangeX: 1.8
   nearRangeY: 3
 --- !u!61 &370372477
@@ -2933,6 +2966,8 @@ MonoBehaviour:
   dodgeSpeed: 16
   dodgeDuration: 0.23
   dodgeCooldown: 0.97
+  dodgeDamage: 24
+  dodgeKnockback: 8
   turboUnlocked: 0
   turboDuration: 5
   turboCooldown: 5
@@ -3113,10 +3148,6 @@ MonoBehaviour:
   weapons:
   - {fileID: 11400000, guid: 1e6de9bd0a8e48b4f927064189356c1f, type: 2}
   - {fileID: 11400000, guid: 52329b609a2c4c74086b57baeff84773, type: 2}
-  - {fileID: 11400000, guid: 359936268f26c2242ae720691a3a4939, type: 2}
-  - {fileID: 11400000, guid: 17068fae6a00a394c9fe6ee21b19779e, type: 2}
-  - {fileID: 11400000, guid: 3dc288b0d46af2d4e8248618c6452522, type: 2}
-  - {fileID: 11400000, guid: 6a38b7148810ebf43a66c4d5c3c4cd01, type: 2}
   current: 0
   targetMask:
     serializedVersion: 2

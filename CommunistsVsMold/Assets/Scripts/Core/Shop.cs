@@ -20,6 +20,7 @@ namespace Kommunisty
             public PickupKind kind = PickupKind.Medkit;
             public int amount = 1;
             public int price = 20;
+            public WeaponSO weapon;   // если задано — покупка ОРУЖИЯ (добавляется в арсенал)
         }
 
         [SerializeField] Offer[] offers = new Offer[]
@@ -39,10 +40,14 @@ namespace Kommunisty
         Wallet wallet;
         AmmoInventory ammo;
         UtilityInventory util;
+        WeaponController weaponCtrl;
         bool playerInRange;
 
         public bool PlayerInRange => playerInRange;
         public Offer[] Offers => offers;
+
+        /// <summary>Это оружие уже куплено (для затемнения в окне магазина).</summary>
+        public bool IsOwned(Offer o) => o != null && o.weapon != null && weaponCtrl != null && weaponCtrl.HasWeapon(o.weapon);
 
         void Awake()
         {
@@ -60,6 +65,7 @@ namespace Kommunisty
             wallet = p.GetComponent<Wallet>();
             ammo = p.GetComponent<AmmoInventory>();
             util = p.GetComponent<UtilityInventory>();
+            weaponCtrl = p.GetComponent<WeaponController>();
         }
 
         void Update()
@@ -84,6 +90,19 @@ namespace Kommunisty
         {
             if (offers == null || i < 0 || i >= offers.Length || wallet == null) return false;
             var o = offers[i];
+
+            // Покупка ОРУЖИЯ — добавляем в арсенал (если ещё нет).
+            if (o.weapon != null)
+            {
+                if (weaponCtrl != null && weaponCtrl.HasWeapon(o.weapon)) { Toast.Show("Уже есть: " + o.label); return false; }
+                if (!wallet.TrySpend(o.price)) { Toast.Show("Не хватает денег: " + o.label + " (" + o.price + ")"); return false; }
+                weaponCtrl?.AddWeapon(o.weapon);
+                AudioManager.Instance?.PlayPickup();
+                Toast.Show("Куплено оружие: " + o.label);
+                return true;
+            }
+
+            // Расходники / патроны.
             if (!wallet.TrySpend(o.price))
             {
                 Toast.Show("Не хватает денег: " + o.label + " (" + o.price + ")");

@@ -26,5 +26,8 @@ namespace Kommunisty
 
         [Tooltip("Спрайт оружия, рисуемый ПОВЕРХ героя (в руке)")]
         public Sprite overlaySprite;           // визуал оружия на герое (weapon-overlay)
+
+        [Tooltip("Хедшот этим оружием убивает мгновенно (винтовка)")]
+        public bool headshotLethal = false;
     }
 }

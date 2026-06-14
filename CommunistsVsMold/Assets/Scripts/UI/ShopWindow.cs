@@ -20,7 +20,7 @@ namespace Kommunisty
         Wallet wallet;
         GameObject panel;
         Text moneyText, footerText;
-        Text[] rows = new Text[6];
+        Text[] rows = new Text[9];
         bool built;
 
         void Awake() { Build(); }
@@ -44,9 +44,15 @@ namespace Kommunisty
 
             if (kb != null)
             {
-                if (kb.digit3Key.wasPressedThisFrame) shop.Buy(0);
-                if (kb.digit4Key.wasPressedThisFrame) shop.Buy(1);
-                if (kb.digit5Key.wasPressedThisFrame) shop.Buy(2);
+                if (kb.digit1Key.wasPressedThisFrame) shop.Buy(0);
+                else if (kb.digit2Key.wasPressedThisFrame) shop.Buy(1);
+                else if (kb.digit3Key.wasPressedThisFrame) shop.Buy(2);
+                else if (kb.digit4Key.wasPressedThisFrame) shop.Buy(3);
+                else if (kb.digit5Key.wasPressedThisFrame) shop.Buy(4);
+                else if (kb.digit6Key.wasPressedThisFrame) shop.Buy(5);
+                else if (kb.digit7Key.wasPressedThisFrame) shop.Buy(6);
+                else if (kb.digit8Key.wasPressedThisFrame) shop.Buy(7);
+                else if (kb.digit9Key.wasPressedThisFrame) shop.Buy(8);
             }
             Refresh();
         }
@@ -62,11 +68,15 @@ namespace Kommunisty
         {
             if (moneyText != null) moneyText.text = "Деньги: " + (wallet != null ? wallet.Money : 0);
             var o = shop.Offers;
+            int n = o != null ? o.Length : 0;
             for (int i = 0; i < rows.Length; i++)
             {
-                bool has = o != null && i < o.Length && i < 3;   // покупка завязана на 3/4/5
+                bool has = i < n && i < 9;
                 rows[i].gameObject.SetActive(has);
-                if (has) rows[i].text = "[" + (i + 3) + "]   " + o[i].label + "   —   " + o[i].price + " мон.";
+                if (!has) continue;
+                bool owned = shop.IsOwned(o[i]);
+                rows[i].text = "[" + (i + 1) + "]   " + o[i].label + (owned ? "   — куплено" : "   —   " + o[i].price + " мон.");
+                rows[i].color = owned ? new Color(0.5f, 0.5f, 0.5f, 1f) : new Color(0.94f, 0.94f, 0.94f, 1f);
             }
         }
 
@@ -92,7 +102,7 @@ namespace Kommunisty
             var prt = panel.GetComponent<RectTransform>();
             prt.anchorMin = prt.anchorMax = new Vector2(0.5f, 0.5f);
             prt.pivot = new Vector2(0.5f, 0.5f);
-            prt.sizeDelta = new Vector2(620f, 420f);
+            prt.sizeDelta = new Vector2(620f, 500f);
             prt.anchoredPosition = Vector2.zero;
             panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.92f);
 
@@ -112,10 +122,10 @@ namespace Kommunisty
             moneyText.text = "Деньги: 0";
 
             for (int i = 0; i < rows.Length; i++)
-                rows[i] = MakeText(font, 16, new Color(0.94f, 0.94f, 0.94f), TextAnchor.UpperLeft, -104f - i * 38f, 34f);
+                rows[i] = MakeText(font, 15, new Color(0.94f, 0.94f, 0.94f), TextAnchor.UpperLeft, -100f - i * 34f, 30f);
 
-            footerText = MakeText(font, 14, new Color(0.6f, 0.78f, 1f), TextAnchor.LowerLeft, -380f, 30f);
-            footerText.text = "3 / 4 / 5 — купить        E / Esc — закрыть";
+            footerText = MakeText(font, 14, new Color(0.6f, 0.78f, 1f), TextAnchor.LowerLeft, -466f, 28f);
+            footerText.text = "1 – 9 — купить        E / Esc — закрыть";
 
             panel.SetActive(false);
         }

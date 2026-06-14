@@ -53,6 +53,7 @@ namespace Kommunisty
 
             var kb = Keyboard.current;
             if (kb == null) return;
+            if (ShopWindow.IsOpen) return;   // в магазине цифры 1-9 покупают товар, а не используют предметы
             if (kb.digit1Key.wasPressedThisFrame) UseMedkit();
             if (kb.digit2Key.wasPressedThisFrame) ActivateMask();
         }

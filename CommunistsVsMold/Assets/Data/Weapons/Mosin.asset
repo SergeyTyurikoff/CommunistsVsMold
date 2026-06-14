@@ -27,3 +27,4 @@ MonoBehaviour:
   meleeRange: 1.2
   meleeArc: 1.4
   overlaySprite: {fileID: 5845672348782818697, guid: c17d69864e8d490458baec9f00415f57, type: 3}
+  headshotLethal: 1

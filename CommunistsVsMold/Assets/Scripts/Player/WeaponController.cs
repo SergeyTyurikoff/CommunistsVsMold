@@ -61,6 +61,17 @@ namespace Kommunisty
         /// <summary>Индекс текущего оружия в списке.</summary>
         public int CurrentIndex => (weapons != null && weapons.Count > 0) ? Mathf.Clamp(current, 0, weapons.Count - 1) : -1;
 
+        /// <summary>Уже есть ли это оружие в арсенале.</summary>
+        public bool HasWeapon(WeaponSO w) => w != null && weapons != null && weapons.Contains(w);
+
+        /// <summary>Добавить оружие в арсенал (покупка/находка). Вернёт false, если уже есть.</summary>
+        public bool AddWeapon(WeaponSO w)
+        {
+            if (w == null || weapons == null || weapons.Contains(w)) return false;
+            weapons.Add(w);
+            return true;
+        }
+
         void Awake()
         {
             pc = GetComponent<PlayerController>();
@@ -179,7 +190,7 @@ namespace Kommunisty
 
                 Bullet b = BulletPool.Instance.Get();
                 if (b == null) continue;
-                b.Init(muzzlePos, dir, w.projectileSpeed, w.damage * ComboMult(), w.range, w.knockback, targetMask);
+                b.Init(muzzlePos, dir, w.projectileSpeed, w.damage * ComboMult(), w.range, w.knockback, targetMask, w.headshotLethal);
                 GameFX.Instance?.Tracer(muzzlePos, dir);   // яркая трасса по направлению
             }
 

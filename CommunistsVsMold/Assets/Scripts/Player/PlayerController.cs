@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,6 +32,8 @@ namespace Kommunisty
         [SerializeField] float dodgeSpeed = 16f;
         [SerializeField] float dodgeDuration = 0.23f;   // ~14 кадров @60
         [SerializeField] float dodgeCooldown = 0.97f;   // ~58 кадров @60
+        [SerializeField] float dodgeDamage = 24f;       // урон врагам на пути переката
+        [SerializeField] float dodgeKnockback = 8f;     // отброс врагов рывком
 
         [Header("Турбо (C) — единственный режим, тратит здоровье")]
         [SerializeField] bool turboUnlocked = false;
@@ -90,6 +93,7 @@ namespace Kommunisty
         int jumpsLeft;
         float coyoteTimer, jumpBufferTimer;
         float dodgeTimer, dodgeCdTimer, dodgeDir;
+        readonly HashSet<int> dodgeHits = new HashSet<int>();   // кого уже задели текущим перекатом
         float turboTimer, turboCdTimer, weakTimer;
         float invulnTimer;
         float slowTimer, slowMult = 1f;   // газ-замедление (PORT_SPEC §3)
@@ -168,6 +172,7 @@ namespace Kommunisty
                 dodgeTimer = dodgeDuration;
                 dodgeCdTimer = dodgeCooldown;
                 invulnTimer = dodgeDuration;
+                dodgeHits.Clear();
             }
 
             // Спуск сквозь one-way платформу (S / ↓)
@@ -232,6 +237,26 @@ namespace Kommunisty
             }
         }
 
+        // «Скачок к врагу»: во время переката бьём и отбрасываем врагов на пути (каждого раз).
+        void DodgeHit()
+        {
+            var hits = Physics2D.OverlapBoxAll((Vector2)transform.position + new Vector2(0f, 0.6f),
+                                               new Vector2(1.0f, 1.2f), 0f, stompMask);
+            for (int i = 0; i < hits.Length; i++)
+            {
+                var col = hits[i];
+                if (col == null) continue;
+                if (col.GetComponentInParent<BossController>() != null) continue;   // боссов не отбрасываем
+                int id = col.gameObject.GetInstanceID();
+                if (dodgeHits.Contains(id)) continue;
+                var dmg = col.GetComponent<IDamageable>() ?? col.GetComponentInParent<IDamageable>();
+                if (dmg == null) continue;
+                dodgeHits.Add(id);
+                dmg.TakeDamage(dodgeDamage, new Vector2(dodgeDir, 0.35f) * dodgeKnockback);
+                GameFX.Instance?.Shake(0.07f, 0.12f);
+            }
+        }
+
         void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
@@ -241,6 +266,7 @@ namespace Kommunisty
             {
                 dodgeTimer -= dt;
                 rb.linearVelocity = new Vector2(dodgeDir * dodgeSpeed, 0f);
+                DodgeHit();   // «скачок к врагу»: урон + отброс врагов на пути
                 return;
             }
 

@@ -17,6 +17,7 @@ namespace Kommunisty
         private float maxDist;
         private float travelled;
         private LayerMask targetMask;
+        private bool headshotLethal;
         private SpriteRenderer sr;
 
         private void Awake()
@@ -28,7 +29,7 @@ namespace Kommunisty
         /// Инициализация снаряда из пула/оружия. Включает объект, задаёт позицию,
         /// разворачивает по направлению и сбрасывает пройденный путь.
         /// </summary>
-        public void Init(Vector2 pos, Vector2 direction, float speed, float damage, float range, float knockback, LayerMask targetMask)
+        public void Init(Vector2 pos, Vector2 direction, float speed, float damage, float range, float knockback, LayerMask targetMask, bool headshotLethal = false)
         {
             transform.position = pos;
 
@@ -38,6 +39,7 @@ namespace Kommunisty
             this.maxDist = range;
             this.knockback = knockback;
             this.targetMask = targetMask;
+            this.headshotLethal = headshotLethal;
             travelled = 0f;
 
             // Поворот спрайта по направлению полёта (z-rotation).
@@ -73,10 +75,15 @@ namespace Kommunisty
             if (target != null)
             {
                 float dmg = damage;
-                // Зона попадания: верхняя ~28% коллайдера цели = хедшот (×2).
+                // Зона попадания: верхняя ~28% коллайдера цели = хедшот.
                 var b = other.bounds;
                 bool head = b.size.y > 0.01f && transform.position.y >= b.max.y - b.size.y * 0.28f;
-                if (head) { dmg *= 2f; GameFX.Instance?.Headshot(transform.position); }
+                if (head)
+                {
+                    // Винтовка — хедшот убивает мгновенно; прочее оружие — ×2.
+                    dmg = headshotLethal ? 100000f : dmg * 2f;
+                    GameFX.Instance?.Headshot(transform.position);
+                }
                 target.TakeDamage(dmg, dir.normalized * knockback);
                 Despawn();
             }
