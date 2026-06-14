@@ -29,6 +29,10 @@ namespace Kommunisty
             new Offer { label = "Патроны винтовка", kind = PickupKind.AmmoRifle,  amount = 12, price = 18 },
         };
 
+        [Header("Зона покупки (близость к снабженцу)")]
+        [SerializeField] float nearRangeX = 1.8f;   // по X — подойти вплотную
+        [SerializeField] float nearRangeY = 3f;     // по Y — щедро (игрок может стоять чуть выше/ниже)
+
         Collider2D zone;
         PlayerController pc;
         Transform playerTf;
@@ -61,7 +65,15 @@ namespace Kommunisty
         void Update()
         {
             if (playerTf == null) CachePlayer();
-            playerInRange = zone != null && playerTf != null && zone.OverlapPoint(playerTf.position);
+            // Близость по позиции снабженца, а не OverlapPoint по ногам игрока: точка ног
+            // (y≈0 после выравнивания координат) могла не попадать в зону-триггер магазина.
+            if (playerTf != null)
+            {
+                float dx = Mathf.Abs(playerTf.position.x - transform.position.x);
+                float dy = Mathf.Abs(playerTf.position.y - transform.position.y);
+                playerInRange = dx <= nearRangeX && dy <= nearRangeY;
+            }
+            else playerInRange = false;
             if (!playerInRange) return;
 
             var kb = Keyboard.current;
@@ -76,9 +88,14 @@ namespace Kommunisty
         {
             if (offers == null || i < 0 || i >= offers.Length || wallet == null) return false;
             var o = offers[i];
-            if (!wallet.TrySpend(o.price)) return false;
+            if (!wallet.TrySpend(o.price))
+            {
+                Toast.Show("Не хватает денег: " + o.label + " (" + o.price + ")");
+                return false;
+            }
             Grant(o);
             AudioManager.Instance?.PlayPickup();
+            Toast.Show("Куплено: " + o.label);
             return true;
         }
 
