@@ -30,19 +30,26 @@ namespace Kommunisty
 
         GameObject geomRoot, entRoot;
         static Sprite unitSprite;
-        int builtBiome;   // биом, под который сейчас строится геометрия (для тинта кромок)
+        static Sprite stoneTile;   // тайлящаяся каменная текстура со швами/кирпичными стыками (как world.js)
+        int builtBiome;            // биом, под который сейчас строится геометрия
 
-        // Цвет верхней кромки платформы по биому (поверхностный «грунт»): лес→земля→холод→песок→багрянец→фиолет.
-        static readonly Color[] BiomeTints =
+        // Тело камня платформы (как world.js): земля #252530, sky #30303a.
+        static readonly Color GroundStone = new Color(0.145f, 0.145f, 0.188f, 1f);
+        static readonly Color SkyStone    = new Color(0.188f, 0.188f, 0.227f, 1f);
+
+        // Точные цвета верхней полосы-«грунта» по уровню (world.js surfColor, levelIndex 0..5):
+        // лес #3a5228, снег #a0b8c2, песок #8a6038, болото #2a5038, завод #404050, плесень #5a2020.
+        static readonly Color[] SurfaceColors =
         {
-            new Color(0.36f, 0.55f, 0.28f),
-            new Color(0.45f, 0.38f, 0.22f),
-            new Color(0.30f, 0.45f, 0.55f),
-            new Color(0.55f, 0.45f, 0.30f),
-            new Color(0.50f, 0.30f, 0.30f),
-            new Color(0.35f, 0.30f, 0.45f),
+            new Color(0.227f, 0.322f, 0.157f),
+            new Color(0.627f, 0.722f, 0.761f),
+            new Color(0.541f, 0.376f, 0.220f),
+            new Color(0.165f, 0.314f, 0.220f),
+            new Color(0.251f, 0.251f, 0.314f),
+            new Color(0.353f, 0.125f, 0.125f),
         };
-        static Color BiomeTint(int b) => BiomeTints[Mathf.Clamp(b, 0, BiomeTints.Length - 1)];
+        // biome 0 (обучение) визуально = лес (idx 0); biome>=1 → idx = biome-1 (как li в BiomeLayouts).
+        static Color SurfaceColor(int biome) => SurfaceColors[Mathf.Clamp(biome == 0 ? 0 : biome - 1, 0, SurfaceColors.Length - 1)];
 
         void Start()
         {
@@ -154,30 +161,73 @@ namespace Kommunisty
                 col.usedByEffector = true;
             }
 
-            // Слой 1 — каменное тело платформы.
-            AddQuad(go.transform, "Body", w, h, 0f, p.sky ? skyColor : groundColor, -10);
+            // Слой 1 — каменное тело: тайлящаяся текстура (швы + кирпичные стыки), тинт камнем.
+            EnsureStoneTile();
+            var body = new GameObject("Body");
+            body.transform.SetParent(go.transform, false);
+            var bsr = body.AddComponent<SpriteRenderer>();
+            bsr.sprite = stoneTile;
+            bsr.drawMode = SpriteDrawMode.Tiled;   // повтор тайла по размеру → стыки каждые 32px (1 юнит)
+            bsr.size = new Vector2(w, h);
+            bsr.color = p.sky ? SkyStone : GroundStone;
+            bsr.sortingOrder = -10;
 
-            // Слой 2 — верхняя кромка с биом-тинтом (читается как «грунт/поверхность»).
+            // Слой 2 — верхняя полоса-«грунт» с точным цветом биома.
             float topH = Mathf.Min(0.16f, h * 0.5f);
-            AddQuad(go.transform, "Top", w, topH, h * 0.5f - topH * 0.5f, BiomeTint(builtBiome), -9);
+            AddQuad(go.transform, "Top", w, topH, 0f, h * 0.5f - topH * 0.5f, SurfaceColor(builtBiome), -9);
 
-            // Слой 3 — тонкий светлый блик сразу под кромкой (объём/край).
+            // Слой 3 — тонкий светлый блик кромки.
             float glintH = Mathf.Min(0.05f, h * 0.2f);
-            AddQuad(go.transform, "Glint", w * 0.98f, glintH, h * 0.5f - topH - glintH * 0.5f,
-                    new Color(1f, 1f, 1f, 0.35f), -8);
+            AddQuad(go.transform, "Glint", w, glintH, 0f, h * 0.5f - glintH * 0.5f, new Color(1f, 1f, 1f, 0.16f), -8);
+
+            // Слой 4 — тёмные кромки: у sky — нижняя «висячая» грань, у земли — боковые.
+            if (p.sky)
+            {
+                AddQuad(go.transform, "Under", w, 0.12f, 0f, -h * 0.5f + 0.06f, new Color(0f, 0f, 0f, 0.45f), -9);
+            }
+            else
+            {
+                float eW = 0.12f;
+                AddQuad(go.transform, "EdgeL", eW, h, -w * 0.5f + eW * 0.5f, 0f, new Color(0f, 0f, 0f, 0.30f), -9);
+                AddQuad(go.transform, "EdgeR", eW, h,  w * 0.5f - eW * 0.5f, 0f, new Color(0f, 0f, 0f, 0.30f), -9);
+            }
         }
 
-        // Дочерний спрайт-слой платформы: unitSprite, размер через localScale, смещение по локальному Y.
-        static void AddQuad(Transform parent, string name, float w, float h, float localY, Color color, int order)
+        // Дочерний спрайт-слой платформы (Simple): unitSprite, размер через localScale, смещение по X/Y.
+        static void AddQuad(Transform parent, string name, float w, float h, float localX, float localY, Color color, int order)
         {
             var q = new GameObject(name);
             q.transform.SetParent(parent, false);
-            q.transform.localPosition = new Vector3(0f, localY, 0f);
+            q.transform.localPosition = new Vector3(localX, localY, 0f);
             q.transform.localScale = new Vector3(w, h, 1f);
             var sr = q.AddComponent<SpriteRenderer>();
             sr.sprite = unitSprite;
             sr.color = color;
             sr.sortingOrder = order;
+        }
+
+        // Процедурный каменный тайл 32×32 (PPU 32 → 1 тайл = 1 юнит): белая база (тинтуется камнем),
+        // вертикальный кирпичный стык (левый край) + горизонтальный шов (низ) + лёгкая неоднородность.
+        static void EnsureStoneTile()
+        {
+            if (stoneTile != null) return;
+            const int S = 32;
+            var tex = new Texture2D(S, S, TextureFormat.RGBA32, false);
+            tex.wrapMode = TextureWrapMode.Repeat;
+            tex.filterMode = FilterMode.Point;
+            for (int y = 0; y < S; y++)
+                for (int x = 0; x < S; x++)
+                {
+                    float v = 1f;
+                    if (((x * 7 + y * 13) % 17) == 0) v -= 0.06f;   // крапинки темнее
+                    if (((x * 5 + y * 11) % 23) == 0) v += 0.05f;   // крапинки светлее
+                    if (x == 0) v *= 0.72f;                          // вертикальный стык
+                    if (y == 0) v *= 0.80f;                          // горизонтальный шов
+                    v = Mathf.Clamp01(v);
+                    tex.SetPixel(x, y, new Color(v, v, v, 1f));
+                }
+            tex.Apply();
+            stoneTile = Sprite.Create(tex, new Rect(0, 0, S, S), new Vector2(0.5f, 0.5f), 32f);
         }
 
         // Ставит объект так, чтобы НИЗ его коллайдера лёг ровно на пол floorY
