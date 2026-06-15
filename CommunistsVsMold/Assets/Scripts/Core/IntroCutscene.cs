@@ -38,8 +38,11 @@ namespace Kommunisty
             var cm = CutsceneManager.Instance;
             var player = GameObject.FindWithTag("Player");
             var ptf = player != null ? player.transform : null;
-            float px = ptf != null ? ptf.position.x : 0f;
+
+            // Локация начинается с ЛЕВОГО края — ставим Ленина слева, дальше всё разворачивается вправо.
             float py = ptf != null ? ptf.position.y : 0f;
+            float px = 1.5f;
+            if (ptf != null) ptf.position = new Vector3(px, py, 0f);
 
             // Мавзолей — без боя: убираем врагов на время сюжета.
             foreach (var mb in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
@@ -50,22 +53,23 @@ namespace Kommunisty
             var sawn = MakeBox("ObrezPickup", new Vector3(px + 5.2f, py + 0.3f, 0f), new Vector2(0.6f, 0.22f), new Color(0.55f, 0.38f, 0.16f));
             MakeBox("Corpse", new Vector3(px + 5.2f, py + 0.15f, 0f), new Vector2(1.5f, 0.4f), new Color(0.4f, 0.4f, 0.42f));
 
-            yield return cm.Say("Ленин", "Поднимите мне веки.");
-            yield return cm.Say("Человек", "Наконец-то!");
-            yield return cm.Say("Ленин", "Который сейчас час??");
-            yield return cm.Say("Человек", "Нас охватила страшная болезнь, только вы нам поможете.");
-            yield return cm.Say("Ленин", "Ты не ответил на вопрос.");
+            Transform off = officer != null ? officer.transform : null;
+            yield return cm.Say(ptf, "Ленин", "Поднимите мне веки.");
+            yield return cm.Say(off, "Человек", "Наконец-то!");
+            yield return cm.Say(ptf, "Ленин", "Который сейчас час??");
+            yield return cm.Say(off, "Человек", "Нас охватила страшная болезнь, только вы нам поможете.");
+            yield return cm.Say(ptf, "Ленин", "Ты не ответил на вопрос.");
 
             // Человек уходит вправо.
-            yield return cm.MoveActor(officer != null ? officer.transform : null, px + 6.8f, 3f);
-            yield return cm.Say("Ленин", "Куда ты уходишь?");
+            yield return cm.MoveActor(off, px + 6.8f, 3f);
+            yield return cm.Say(ptf, "Ленин", "Куда ты уходишь?");
 
             // Ленин идёт следом, проходит мимо трупа, берёт обрез.
             yield return cm.MoveActor(ptf, px + 5.0f, 3.2f);
             if (sawn != null) Destroy(sawn);
             yield return cm.Wait(0.2f);
 
-            yield return cm.Say("Ленин", "Так всё-таки который сейчас час?");
+            yield return cm.Say(ptf, "Ленин", "Так всё-таки который сейчас час?");
 
             // Превращение: офицер зеленеет, по полу расходится плесень.
             if (officer != null)
@@ -75,7 +79,7 @@ namespace Kommunisty
             }
             var mold = MakeBox("Mold", new Vector3(px + 6.8f, py + 0.05f, 0f), new Vector2(0.5f, 0.2f), new Color(0.35f, 0.7f, 0.2f, 0.7f));
             StartCoroutine(GrowMold(mold != null ? mold.transform : null));
-            yield return cm.Say("Плесень", "Твоё время умирать, ахах!");
+            yield return cm.Say(off, "Плесень", "Твоё время умирать, ахах!");
 
             // Ленин не раздумывая стреляет — разлёт на части + кровь на экран.
             Vector3 opos = officer != null ? officer.transform.position : new Vector3(px + 6.8f, py + 0.9f, 0f);
@@ -90,7 +94,7 @@ namespace Kommunisty
             AudioManager.Instance?.PlayEnemyDeath();
 
             yield return cm.Wait(0.6f);
-            yield return cm.Say("Ленин", "Досвидос.");
+            yield return cm.Say(ptf, "Ленин", "Досвидос.");
             // Конец. Управление вернётся; дальше Ленин выходит вправо (переход по краю — S2).
         }
 

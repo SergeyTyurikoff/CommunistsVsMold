@@ -19,6 +19,7 @@ namespace Kommunisty
 
         [Header("Биомы")]
         [SerializeField] int startBiome = 1;
+        [SerializeField] float leftStartX = 1.5f;   // локация начинается с ЛЕВОГО края — тут стартует игрок
         [SerializeField] Color[] palette = new Color[]
         {
             new Color(0.08f, 0.08f, 0.11f),  // мавзолей — холодный тёмный
@@ -78,9 +79,10 @@ namespace Kommunisty
         // Общий переход: игрок на старт биома, чекпойнт, лечение, фон, (опц.) легаси-враг, событие.
         void GoToCurrentBiome()
         {
-            Vector3 startPos = biomeStart != null
-                ? biomeStart.position
-                : (player != null ? player.transform.position : transform.position);
+            // Старт у ЛЕВОГО края локации (высоту берём из biomeStart, если задан).
+            float startY = biomeStart != null ? biomeStart.position.y
+                         : (player != null ? player.transform.position.y : 1f);
+            Vector3 startPos = new Vector3(leftStartX, startY, 0f);
 
             if (player != null)
             {
