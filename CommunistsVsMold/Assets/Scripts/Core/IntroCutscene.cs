@@ -48,13 +48,20 @@ namespace Kommunisty
             foreach (var mb in Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
                 if (mb != null && mb.GetType().Name.EndsWith("AI")) Destroy(mb.gameObject);
 
-            // Заглушки.
-            var officer = MakeBox("Officer", new Vector3(px + 2.2f, py + 0.9f, 0f), new Vector2(0.9f, 1.8f), new Color(0.72f, 0.12f, 0.1f));
+            // Заглушки. Ленин ЛЕЖИТ В ГРОБУ слева — его будят ото сна.
+            MakeBox("Coffin", new Vector3(px, py + 0.18f, 0f), new Vector2(2.0f, 0.55f), new Color(0.22f, 0.16f, 0.12f));
+            if (ptf != null) { ptf.position = new Vector3(px, py + 0.55f, 0f); ptf.rotation = Quaternion.Euler(0f, 0f, 90f); }  // лежит
+            var officer = MakeBox("Officer", new Vector3(px + 4.5f, py + 0.9f, 0f), new Vector2(0.9f, 1.8f), new Color(0.72f, 0.12f, 0.1f));
             var sawn = MakeBox("ObrezPickup", new Vector3(px + 5.2f, py + 0.3f, 0f), new Vector2(0.6f, 0.22f), new Color(0.55f, 0.38f, 0.16f));
             MakeBox("Corpse", new Vector3(px + 5.2f, py + 0.15f, 0f), new Vector2(1.5f, 0.4f), new Color(0.4f, 0.4f, 0.42f));
 
             Transform off = officer != null ? officer.transform : null;
+
+            // Офицер подходит к гробу будить Ленина.
+            yield return cm.MoveActor(off, px + 1.5f, 3f);
             yield return cm.Say(ptf, "Ленин", "Поднимите мне веки.");
+            // Ленин встаёт из гроба: разворот вертикально + подъём.
+            yield return Rise(ptf, py);
             yield return cm.Say(off, "Человек", "Наконец-то!");
             yield return cm.Say(ptf, "Ленин", "Который сейчас час??");
             yield return cm.Say(off, "Человек", "Нас охватила страшная болезнь, только вы нам поможете.");
@@ -96,6 +103,24 @@ namespace Kommunisty
             yield return cm.Wait(0.6f);
             yield return cm.Say(ptf, "Ленин", "Досвидос.");
             // Конец. Управление вернётся; дальше Ленин выходит вправо (переход по краю — S2).
+        }
+
+        // Ленин встаёт из гроба: поворот из горизонтали в вертикаль + подъём на пол.
+        IEnumerator Rise(Transform tr, float standY)
+        {
+            if (tr == null) yield break;
+            float t = 0f, dur = 0.55f;
+            float startZ = tr.eulerAngles.z;
+            float startY = tr.position.y;
+            while (tr != null && t < dur)
+            {
+                t += Time.deltaTime;
+                float k = Mathf.SmoothStep(0f, 1f, t / dur);
+                tr.rotation = Quaternion.Euler(0f, 0f, Mathf.LerpAngle(startZ, 0f, k));
+                var p = tr.position; p.y = Mathf.Lerp(startY, standY, k); tr.position = p;
+                yield return null;
+            }
+            if (tr != null) { tr.rotation = Quaternion.identity; var p = tr.position; p.y = standY; tr.position = p; }
         }
 
         // Плесень растёт вширь.
